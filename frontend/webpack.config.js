@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     context: path.resolve(__dirname, 'src'),
@@ -13,12 +14,6 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
-    // devServer: {
-    //     contentBase: path.join(__dirname, 'dist'),
-    //     compress: true,
-    //     port: 9000,
-    //     open: true,
-    // },
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html'
@@ -26,6 +21,18 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: '[name].css',
         }),
+        new CopyPlugin({
+            patterns: [
+            //   {
+            //     from: path.resolve(__dirname, 'src/favicon.ico'),
+            //     to: path.resolve(__dirname, 'dist/favicon.ico'),
+            //   },
+              {
+                from: path.resolve(__dirname, 'src/assets/images'),
+                to: path.resolve(__dirname, 'dist/'),
+              },
+            ],
+          }),
         // new BundleAnalyzerPlugin({
         //     analyzerPort: 8000,
         //     openAnalyzer: false
@@ -39,13 +46,12 @@ module.exports = {
                 exclude: '/node_modules/'
             },
             {
-                test: /\.scss$/,
+                test: /\.css$/,
                 use: [
                   {
                     loader: MiniCssExtractPlugin.loader,
                   },
                   'css-loader',
-                  'sass-loader',
                 ],
             },
         ],
