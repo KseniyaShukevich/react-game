@@ -1,0 +1,8 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": [ "reactapp" ],
+    "rules": {
+      "@typescript-eslint/rule-name": "error"
+    }
+}
