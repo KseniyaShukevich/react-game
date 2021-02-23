@@ -2,20 +2,21 @@ import React from 'react';
 import { Container, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   footer: {
-    background: '#4791db',
+    background: theme.palette.primary.light,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   author: {
     textDecoration: 'none',
     cursor: 'pointer',
-    color: 'white',
+    color: theme.palette.primary.contrastText,
   },
   container: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '17px',
   },
   coursesLink: {
     cursor: 'pointer',
@@ -24,30 +25,30 @@ const useStyles = makeStyles(() => ({
   },
   logo: {
     width: '100px',
-  }
-}))
+  },
+}));
 
 const Footer: React.FC = () => {
   const classes = useStyles();
 
   return (
     <footer className={classes.footer}>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <Box className={classes.container}>
           <Box>
             <a className={classes.author} href="https://github.com/KseniyaShukevich">
-              <Typography variant="subtitle1">Author: Kseniya Shukevich</Typography>
+              <Typography variant="subtitle1">Author: Kseniya Shukevich, 2021</Typography>
             </a>
           </Box>
           <Box>
             <a className={classes.coursesLink} href="https://rs.school/js/">
-              <img className={classes.logo} src="./rs_school_js.svg" alt="courses"/>
+              <img className={classes.logo} src="./rs_school_js.svg" alt="courses" />
             </a>
           </Box>
         </Box>
       </Container>
     </footer>
   );
-}
+};
 
 export default Footer;

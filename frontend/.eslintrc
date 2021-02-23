@@ -1,8 +1,11 @@
 {
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
-    "extends": [ "reactapp" ],
+    "extends": ["airbnb-typescript"],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
     "rules": {
-      "@typescript-eslint/rule-name": "error"
+        "linebreak-style": ["warn", "windows"]
     }
 }
