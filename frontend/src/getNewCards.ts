@@ -41,11 +41,12 @@ const getMixCards = (cards: Array<number>): Array<number> => {
 };
 
 const getCardsObjects = (cards: Array<number>): Array<ICard> => {
-  const cardsObjects: Array<ICard> = cards.map((card: number) => {
+  const cardsObjects: Array<ICard> = cards.map((card: number, index: number) => {
     const cardObject: ICard = {
+      id: index,
       value: card,
       isCorrect: false,
-      isOpen: false,
+      isOpen: true,
     };
     return cardObject;
   });

@@ -1,4 +1,5 @@
 interface ICard {
+  id: number
   value: number
   isCorrect: boolean
   isOpen: boolean

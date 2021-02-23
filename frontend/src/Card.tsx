@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Container, Box, Typography, Grid,
+  Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   card: {
     position: 'relative',
     perspective: '1000px',
@@ -44,26 +44,42 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
   },
 }));
+interface IProps {
+  id: number
+  value: number
+  isOpen: boolean
+  setCardOpen: (value: number) => void
+  isEvenCardCount: () => boolean
+  isCorrectCard: (value: number) => boolean
+  setInCorrectCard: (value: number) => void
+  closeWrangCards: () => void
+}
 
-type Props = {
-  card: number,
-};
-
-const Card: React.FC<Props> = ({ card }) => {
+const Card: React.FC<IProps> = ({
+  id, value, isOpen, setCardOpen, isEvenCardCount, isCorrectCard, setInCorrectCard, closeWrangCards,
+}: IProps) => {
   const classes = useStyles();
-  const [isOtherSide, setIsOtherSide] = useState<boolean>(false);
 
   const handleClick = () => {
-    setIsOtherSide(!isOtherSide);
+    if (!isOpen) {
+      setCardOpen(id);
+      if (isEvenCardCount()) {
+        if (isCorrectCard(value)) {
+          setInCorrectCard(value);
+        } else {
+          setTimeout(closeWrangCards, 1200);
+        }
+      }
+    }
   };
 
   return (
     <Grid item xs={2}>
       <div className={classes.card}>
-        <div className={isOtherSide ? classes.frontInBack : classes.front} onClick={handleClick}>
-          <img className={classes.image} src={`./${card}.jpg`} alt="card" />
+        <div className={!isOpen ? classes.frontInBack : classes.front} onClick={handleClick}>
+          <img className={classes.image} src={`./${value}.jpg`} alt="card" />
         </div>
-        <div className={isOtherSide ? classes.backInFront : classes.back} onClick={handleClick}>
+        <div className={!isOpen ? classes.backInFront : classes.back} onClick={handleClick}>
           <img className={classes.image} src="./back.jpg" alt="card" />
         </div>
       </div>
