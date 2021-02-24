@@ -28,7 +28,12 @@ const GridGame: React.FC = () => {
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
   const [toggle, setToggle] = useState<boolean>(false);
   const [countSeconds, setCountSeconds] = useState<number>(0);
+  const [errors, setErrors] = useState<number>(0);
   const idIntervals = useRef<Array<any>>([]);
+
+  const addError = (): void => {
+    setErrors((prev) => prev + 1);
+  };
 
   const startTime = (): void => {
     idIntervals.current.push(setInterval(() => setCountSeconds((prev) => prev + 1), 1000));
@@ -118,6 +123,7 @@ const GridGame: React.FC = () => {
     closeCards();
     clearSetInterval();
     setCountSeconds(0);
+    setErrors(0);
     setTimeout(() => {
       setCards(getNewCards());
       setToggle(!toggle);
@@ -138,6 +144,7 @@ const GridGame: React.FC = () => {
     <main>
       <Container maxWidth="lg" className={classes.container}>
         <Menu
+          errors={errors}
           countSeconds={countSeconds}
           getNewGame={getNewGame}
         />
@@ -152,6 +159,7 @@ const GridGame: React.FC = () => {
               isCorrectCard={isCorrectCard}
               setInCorrectCard={setInCorrectCard}
               closeWrangCards={closeWrangCards}
+              addError={addError}
               key={card.id}
             />
           ))}

@@ -15,11 +15,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
+  errors: number
   countSeconds: number
   getNewGame: () => void
 }
 
-const Menu: React.FC<IProps> = ({ getNewGame, countSeconds }: IProps) => {
+const Menu: React.FC<IProps> = ({ errors, countSeconds, getNewGame }: IProps) => {
   const classes = useStyles();
 
   const getMinutes = (count: number): number => {
@@ -47,6 +48,13 @@ const Menu: React.FC<IProps> = ({ getNewGame, countSeconds }: IProps) => {
           {minutes}
           :
           {seconds}
+        </Typography>
+      </div>
+      <div>
+        <Typography variant="subtitle2">
+          Errors:
+          {' '}
+          {errors}
         </Typography>
       </div>
       <Button variant="contained" color="primary" onClick={getNewGame}>New game</Button>

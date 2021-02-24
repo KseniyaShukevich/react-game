@@ -53,22 +53,31 @@ interface IProps {
   isCorrectCard: (value: number) => boolean
   setInCorrectCard: (value: number) => void
   closeWrangCards: () => void
+  addError: () => void
 }
 
 const Card: React.FC<IProps> = ({
-  id, value, isOpen, setCardOpen, isEvenCardCount, isCorrectCard, setInCorrectCard, closeWrangCards,
+  id, value, isOpen, setCardOpen, isEvenCardCount, isCorrectCard,
+  setInCorrectCard, closeWrangCards, addError,
 }: IProps) => {
   const classes = useStyles();
+
+  const checkCards = (): void => {
+    if (isCorrectCard(value)) {
+      setInCorrectCard(value);
+    } else {
+      setTimeout(() => {
+        addError();
+        closeWrangCards();
+      }, 1000);
+    }
+  };
 
   const handleClick = () => {
     if (!isOpen) {
       setCardOpen(id);
       if (isEvenCardCount()) {
-        if (isCorrectCard(value)) {
-          setInCorrectCard(value);
-        } else {
-          setTimeout(closeWrangCards, 1200);
-        }
+        checkCards();
       }
     }
   };
