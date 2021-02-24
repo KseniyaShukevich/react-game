@@ -1,4 +1,5 @@
 import ICard from './ICard';
+import idLocalStorage from './idLocalStorage';
 
 const getRandomNumber = (maxCount: number): number => {
   const rand: number = Math.random() * (maxCount);
@@ -55,6 +56,10 @@ const getCardsObjects = (cards: Array<number>): Array<ICard> => {
 };
 
 const getNewCards = (): Array<ICard> => {
+  const savedGame: string = localStorage.getItem(`${idLocalStorage}cards`);
+  if (savedGame) {
+    return JSON.parse(savedGame);
+  }
   const cardsNumbers: Array<number> = getCardsNumbers();
   const cards: Array<number> = [...cardsNumbers, ...cardsNumbers];
   const mixCards: Array<number> = getMixCards(cards);

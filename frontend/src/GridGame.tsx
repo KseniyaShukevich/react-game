@@ -7,6 +7,11 @@ import Card from './Card';
 import Menu from './Menu';
 import getNewCards from './getNewCards';
 import ICard from './ICard';
+import saveGame from './saveGame';
+import isSaveGame from './isSaveGame';
+import idLocalStorage from './idLocalStorage';
+import getSavedSeconds from './savedSeconds';
+import getSavedErrors from './savedErrors';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -27,16 +32,24 @@ const GridGame: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
   const [toggle, setToggle] = useState<boolean>(false);
-  const [countSeconds, setCountSeconds] = useState<number>(0);
-  const [errors, setErrors] = useState<number>(0);
+  const [countSeconds, setCountSeconds] = useState<number>(() => getSavedSeconds());
+  const [errors, setErrors] = useState<number>(() => getSavedErrors());
   const idIntervals = useRef<Array<any>>([]);
 
   const addError = (): void => {
-    setErrors((prev) => prev + 1);
+    setErrors((prev) => {
+      localStorage.setItem(`${idLocalStorage}errors`, `${prev + 1}`);
+      return prev + 1;
+    });
   };
 
   const startTime = (): void => {
-    idIntervals.current.push(setInterval(() => setCountSeconds((prev) => prev + 1), 1000));
+    idIntervals.current.push(setInterval(() => {
+      setCountSeconds((prev) => {
+        localStorage.setItem(`${idLocalStorage}seconds`, `${prev + 1}`);
+        return prev + 1;
+      });
+    }, 1000));
   };
 
   const setCardOpen = (id: number): void => {
@@ -92,6 +105,7 @@ const GridGame: React.FC = () => {
       }
       return cardObj;
     });
+    saveGame(cards);
   };
 
   const closeWrangCards = (): void => {
@@ -119,25 +133,51 @@ const GridGame: React.FC = () => {
     }
   };
 
+  const clearLocalStorage = (): void => {
+    localStorage.removeItem(`${idLocalStorage}cards`);
+    localStorage.removeItem(`${idLocalStorage}seconds`);
+    localStorage.removeItem(`${idLocalStorage}errors`);
+  };
+
   const getNewGame = (): void => {
     closeCards();
     clearSetInterval();
     setCountSeconds(0);
     setErrors(0);
+    clearLocalStorage();
     setTimeout(() => {
       setCards(getNewCards());
       setToggle(!toggle);
     }, 1000);
   };
 
-  useEffect(() => {
+  const closeOpenCards = (): void => {
     setTimeout(() => {
+      saveGame(cards);
       startTime();
       setCards(cards.map((cardObj) => {
         cardObj.isOpen = false;
         return cardObj;
       }));
     }, 5000);
+  };
+
+  const addSavedGame = (): void => {
+    startTime();
+    setCards(cards.map((cardObj) => {
+      if (!cardObj.isCorrect) {
+        cardObj.isOpen = false;
+      }
+      return cardObj;
+    }));
+  };
+
+  useEffect(() => {
+    if (!isSaveGame()) {
+      closeOpenCards();
+    } else {
+      addSavedGame();
+    }
   }, [toggle]);
 
   return (
