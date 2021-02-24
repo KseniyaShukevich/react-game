@@ -3,6 +3,7 @@ import {
   Container, Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import LayerEndGame from './LayerEndGame';
 import Card from './Card';
 import Menu from './Menu';
 import getNewCards from './getNewCards';
@@ -12,6 +13,7 @@ import isSaveGame from './isSaveGame';
 import idLocalStorage from './idLocalStorage';
 import getSavedSeconds from './savedSeconds';
 import getSavedErrors from './savedErrors';
+import getIsEndGame from './getIsEndGame';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     height: '46vw',
     maxHeight: '595px',
+    position: 'relative',
   },
 }));
 
@@ -34,6 +37,7 @@ const GridGame: React.FC = () => {
   const [toggle, setToggle] = useState<boolean>(false);
   const [countSeconds, setCountSeconds] = useState<number>(() => getSavedSeconds());
   const [errors, setErrors] = useState<number>(() => getSavedErrors());
+  const [isEndGame, setIsEndGame] = useState<boolean>(() => getIsEndGame());
   const idIntervals = useRef<Array<any>>([]);
 
   const addError = (): void => {
@@ -98,16 +102,6 @@ const GridGame: React.FC = () => {
     return false;
   };
 
-  const setInCorrectCard = (value: number): void => {
-    cards.map((cardObj) => {
-      if (cardObj.value === value) {
-        cardObj.isCorrect = true;
-      }
-      return cardObj;
-    });
-    saveGame(cards);
-  };
-
   const closeWrangCards = (): void => {
     setCards(cards.map((cardObj) => {
       if (!cardObj.isCorrect) {
@@ -140,6 +134,8 @@ const GridGame: React.FC = () => {
   };
 
   const getNewGame = (): void => {
+    localStorage.removeItem(`${idLocalStorage}isEndGame`);
+    setIsEndGame(false);
     closeCards();
     clearSetInterval();
     setCountSeconds(0);
@@ -148,7 +144,33 @@ const GridGame: React.FC = () => {
     setTimeout(() => {
       setCards(getNewCards());
       setToggle(!toggle);
-    }, 1000);
+    }, 1200);
+  };
+
+  const checkEndGame = () => {
+    let countCorrectCard: number = 0;
+    cards.map((cardObj) => {
+      if (cardObj.isCorrect) {
+        countCorrectCard += 1;
+      }
+      return cardObj;
+    });
+    if (countCorrectCard === cards.length) {
+      clearSetInterval();
+      localStorage.setItem(`${idLocalStorage}isEndGame`, '1');
+      setTimeout(() => setIsEndGame(true), 1000);
+    }
+  };
+
+  const setInCorrectCard = (value: number): void => {
+    cards.map((cardObj) => {
+      if (cardObj.value === value) {
+        cardObj.isCorrect = true;
+      }
+      return cardObj;
+    });
+    saveGame(cards);
+    checkEndGame();
   };
 
   const closeOpenCards = (): void => {
@@ -163,7 +185,9 @@ const GridGame: React.FC = () => {
   };
 
   const addSavedGame = (): void => {
-    startTime();
+    if (!isEndGame) {
+      startTime();
+    };
     setCards(cards.map((cardObj) => {
       if (!cardObj.isCorrect) {
         cardObj.isOpen = false;
@@ -189,6 +213,12 @@ const GridGame: React.FC = () => {
           getNewGame={getNewGame}
         />
         <Grid container spacing={1} className={classes.box}>
+          {isEndGame ? (
+            <LayerEndGame
+              countSeconds={countSeconds}
+              errors={errors}
+            />
+          ) : ''}
           {cards.map((card) => (
             <Card
               value={card.value}

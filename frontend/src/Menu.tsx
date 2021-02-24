@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {
   Container, Grid, Button, Typography,
 } from '@material-ui/core';
+import getMinutes, { getSeconds } from './time';
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: '25px',
+    paddingBottom: theme.spacing(2.7),
   },
 }));
 
@@ -22,19 +23,6 @@ interface IProps {
 
 const Menu: React.FC<IProps> = ({ errors, countSeconds, getNewGame }: IProps) => {
   const classes = useStyles();
-
-  const getMinutes = (count: number): number => {
-    const res: number = Math.floor(count / 60);
-    return res;
-  };
-
-  const getSeconds = (count: number): string => {
-    const res = count % 60;
-    if (res < 10) {
-      return `0${res}`;
-    }
-    return `${res}`;
-  };
 
   const minutes: number = getMinutes(countSeconds);
   const seconds: string = getSeconds(countSeconds);
