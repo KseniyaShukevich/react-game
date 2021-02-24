@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container, Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from './Card';
+import Menu from './Menu';
 import getNewCards from './getNewCards';
 import ICard from './ICard';
 
@@ -11,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: '91vh',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
@@ -24,6 +26,13 @@ const useStyles = makeStyles((theme) => ({
 const GridGame: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
+  const [toggle, setToggle] = useState<boolean>(false);
+  const [countSeconds, setCountSeconds] = useState<number>(0);
+  const idIntervals = useRef<Array<any>>([]);
+
+  const startTime = (): void => {
+    idIntervals.current.push(setInterval(() => setCountSeconds((prev) => prev + 1), 1000));
+  };
 
   const setCardOpen = (id: number): void => {
     let countOpenCard: number = 0;
@@ -89,16 +98,49 @@ const GridGame: React.FC = () => {
     }));
   };
 
-  useEffect(() => {
-    setTimeout(() => setCards(cards.map((cardObj) => {
-      cardObj.isOpen = false;
+  const closeCards = (): void => {
+    setCards(cards.map((cardObj) => {
+      if (cardObj.isOpen) {
+        cardObj.isOpen = false;
+      }
       return cardObj;
-    })), 5000);
-  }, []);
+    }));
+  };
+
+  const clearSetInterval = (): void => {
+    if (idIntervals.current.length > 0) {
+      clearInterval(idIntervals.current[0]);
+      idIntervals.current.shift();
+    }
+  };
+
+  const getNewGame = (): void => {
+    closeCards();
+    clearSetInterval();
+    setCountSeconds(0);
+    setTimeout(() => {
+      setCards(getNewCards());
+      setToggle(!toggle);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      startTime();
+      setCards(cards.map((cardObj) => {
+        cardObj.isOpen = false;
+        return cardObj;
+      }));
+    }, 5000);
+  }, [toggle]);
 
   return (
     <main>
       <Container maxWidth="lg" className={classes.container}>
+        <Menu
+          countSeconds={countSeconds}
+          getNewGame={getNewGame}
+        />
         <Grid container spacing={1} className={classes.box}>
           {cards.map((card) => (
             <Card
