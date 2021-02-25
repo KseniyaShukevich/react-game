@@ -144,7 +144,7 @@ const GridGame: React.FC = () => {
     setTimeout(() => {
       setCards(getNewCards());
       setToggle(!toggle);
-    }, 1200);
+    }, 1100);
   };
 
   const checkEndGame = () => {
