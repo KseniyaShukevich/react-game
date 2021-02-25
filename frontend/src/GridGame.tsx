@@ -157,8 +157,8 @@ const GridGame: React.FC = () => {
     });
     if (countCorrectCard === cards.length) {
       clearSetInterval();
+      setIsEndGame(true);
       localStorage.setItem(`${idLocalStorage}isEndGame`, '1');
-      setTimeout(() => setIsEndGame(true), 1000);
     }
   };
 
@@ -187,7 +187,7 @@ const GridGame: React.FC = () => {
   const addSavedGame = (): void => {
     if (!isEndGame) {
       startTime();
-    };
+    }
     setCards(cards.map((cardObj) => {
       if (!cardObj.isCorrect) {
         cardObj.isOpen = false;
@@ -213,12 +213,12 @@ const GridGame: React.FC = () => {
           getNewGame={getNewGame}
         />
         <Grid container spacing={1} className={classes.box}>
-          {isEndGame ? (
+          {isEndGame && (
             <LayerEndGame
               countSeconds={countSeconds}
               errors={errors}
             />
-          ) : ''}
+          )}
           {cards.map((card) => (
             <Card
               value={card.value}
