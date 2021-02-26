@@ -26,14 +26,14 @@ const saveIsEndGame = (): void => {
   localStorage.setItem(`${idLocalStorage}isEndGame`, '1');
 };
 
-interface IGame {
+interface IGameObj {
   save: (cards: Array<ICard>) => void
   isSave: () => boolean
   getIsEndGame: () => boolean
   saveIsEndGame: () => void
 }
 
-const gameObj: IGame = {
+const gameObj: IGameObj = {
   save,
   isSave,
   getIsEndGame,

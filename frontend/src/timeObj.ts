@@ -25,14 +25,14 @@ const getSavedSeconds = (): number => {
   return 0;
 };
 
-interface ITime {
+interface ITimeObj {
   getMinutes: (count: number) => number
   getSeconds: (count: number) => string
   save: (count: number) => void
   getSavedSeconds: () => number
 }
 
-const timeObj: ITime = {
+const timeObj: ITimeObj = {
   getMinutes,
   getSeconds,
   save,

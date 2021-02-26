@@ -12,6 +12,7 @@ import {
   Paper,
 } from '@material-ui/core';
 import IStatistics from './IStatistics';
+import timeObj from './timeObj';
 
 const useStyles = makeStyles((theme) => ({
   containerTable: {
@@ -78,7 +79,11 @@ const Statistics: React.FC<IProps> = ({
                 <TableRow key={row.id}>
                   <TableCell align="center">{row.id}</TableCell>
                   <TableCell align="center">{row.score}</TableCell>
-                  <TableCell align="center">{row.countSeconds}</TableCell>
+                  <TableCell align="center">
+                    {timeObj.getMinutes(row.countSeconds)}
+                    :
+                    {timeObj.getSeconds(row.countSeconds)}
+                  </TableCell>
                   <TableCell align="center">{row.errors}</TableCell>
                 </TableRow>
               ))}

@@ -12,12 +12,12 @@ const getSaved = (): number => {
   return 0;
 };
 
-interface IErrors {
+interface IErrorsObj {
   save: (count: number) => void
   getSaved: () => number
 }
 
-const errorsObj: IErrors = {
+const errorsObj: IErrorsObj = {
   save,
   getSaved,
 };
