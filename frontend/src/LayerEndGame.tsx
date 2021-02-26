@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import getMinutes, { getSeconds } from './time';
 
 const useStyles = makeStyles(() => ({
@@ -14,7 +14,6 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     height: '100%',
     opacity: 0,
-    transition: 'opacity 1s',
   },
   overlay: {
     opacity: 1,
@@ -31,11 +30,7 @@ const useStyles = makeStyles(() => ({
     background: 'rgba(255, 255, 255, 0.8)',
     transition: 'opacity 1s',
   },
-  text: {
-    textAlign: 'center',
-  },
 }));
-
 interface IProps {
   countSeconds: number
   errors: number
@@ -53,7 +48,7 @@ const LayerEndGame: React.FC<IProps> = ({ countSeconds, errors }: IProps) => {
 
   return (
     <div className={isMounted ? classes.overlay : classes.overlayNone}>
-      <Typography variant="h5" className={classes.text}>
+      <Typography variant="h5" style={{ textAlign: 'center' }}>
         Passed for
         {' '}
         {minutes}
