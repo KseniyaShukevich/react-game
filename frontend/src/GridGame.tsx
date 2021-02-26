@@ -6,16 +6,15 @@ import Card from './Card';
 import Menu from './Menu';
 import getNewCards from './getNewCards';
 import ICard from './ICard';
-import saveGame from './saveGame';
-import isSaveGame from './isSaveGame';
-import idLocalStorage from './idLocalStorage';
-import getSavedSeconds from './savedSeconds';
-import getSavedErrors from './savedErrors';
-import getIsEndGame from './getIsEndGame';
+import IStatistics from './IStatistics';
+import gameObj from './gameObj';
 import StatisticsIcon from './StatisticsIcon';
 import Statistics from './Statistics';
 import maxScore from './maxScore';
-import IStatistics from './IStatistics';
+import clearLocalStorage from './clearLocalStorage';
+import timeObj from './timeObj';
+import errorsObj from './errorsObj';
+import statisticsObj from './statisticsObj';
 
 const useStyles = makeStyles((theme) => ({
   containerGame: {
@@ -45,17 +44,17 @@ const GridGame: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
   const [toggle, setToggle] = useState<boolean>(false);
-  const [countSeconds, setCountSeconds] = useState<number>(() => getSavedSeconds());
+  const [countSeconds, setCountSeconds] = useState<number>(() => timeObj.getSavedSeconds());
   const [isStatistics, setIsStatistics] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<Array<IStatistics> | null>(null);
-  const [errors, setErrors] = useState<number>(() => getSavedErrors());
-  const [isEndGame, setIsEndGame] = useState<boolean>(() => getIsEndGame());
+  const [errors, setErrors] = useState<number>(() => errorsObj.getSaved());
+  const [isEndGame, setIsEndGame] = useState<boolean>(() => gameObj.getIsEndGame());
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
 
   const addError = (): void => {
     setErrors((prev) => {
-      localStorage.setItem(`${idLocalStorage}errors`, `${prev + 1}`);
+      errorsObj.save(prev + 1);
       score.current -= 10;
       return prev + 1;
     });
@@ -64,7 +63,7 @@ const GridGame: React.FC = () => {
   const startTime = (): void => {
     idIntervals.current.push(setInterval(() => {
       setCountSeconds((prev) => {
-        localStorage.setItem(`${idLocalStorage}seconds`, `${prev + 1}`);
+        timeObj.save(prev + 1);
         score.current -= 1;
         return prev + 1;
       });
@@ -142,14 +141,7 @@ const GridGame: React.FC = () => {
     }
   };
 
-  const clearLocalStorage = (): void => {
-    localStorage.removeItem(`${idLocalStorage}cards`);
-    localStorage.removeItem(`${idLocalStorage}seconds`);
-    localStorage.removeItem(`${idLocalStorage}errors`);
-  };
-
   const getNewGame = (): void => {
-    localStorage.removeItem(`${idLocalStorage}isEndGame`);
     score.current = maxScore;
     setIsEndGame(false);
     closeCards();
@@ -163,38 +155,6 @@ const GridGame: React.FC = () => {
     }, 1100);
   };
 
-  const clearRating = (array: Array<IStatistics>) => {
-    const buff: Array<number> = [];
-    const res: Array<IStatistics | null> = array.map((item: IStatistics) => {
-      if (!buff.includes(item.score)) {
-        buff.push(item.score);
-        return item;
-      }
-      return null;
-    });
-
-    const newArray: Array<IStatistics> = res.filter((item) => item !== null);
-    return newArray;
-  };
-
-  const saveStatistics = (): void => {
-    const savedStatistics: string = localStorage.getItem(`${idLocalStorage}statistics`);
-    const newStatistics: IStatistics = {
-      score: score.current,
-      countSeconds,
-      errors,
-    };
-    if (savedStatistics) {
-      const arrayStatistics: Array<IStatistics> = JSON.parse(savedStatistics);
-      arrayStatistics.push(newStatistics);
-      arrayStatistics.sort((a, b) => b.score - a.score);
-      const newArrayStatistics: Array<IStatistics> = clearRating(arrayStatistics);
-      localStorage.setItem(`${idLocalStorage}statistics`, JSON.stringify(newArrayStatistics.slice(0, 10)));
-    } else {
-      localStorage.setItem(`${idLocalStorage}statistics`, JSON.stringify([newStatistics]));
-    }
-  };
-
   const checkEndGame = (): void => {
     let countCorrectCard: number = 0;
     cards.map((cardObj) => {
@@ -206,8 +166,8 @@ const GridGame: React.FC = () => {
     if (countCorrectCard === cards.length) {
       clearSetInterval();
       setIsEndGame(true);
-      saveStatistics();
-      localStorage.setItem(`${idLocalStorage}isEndGame`, '1');
+      statisticsObj.save(score.current, countSeconds, errors);
+      gameObj.saveIsEndGame();
     }
   };
 
@@ -218,13 +178,13 @@ const GridGame: React.FC = () => {
       }
       return cardObj;
     });
-    saveGame(cards);
+    gameObj.save(cards);
     checkEndGame();
   };
 
   const closeOpenCards = (): void => {
     setTimeout(() => {
-      saveGame(cards);
+      gameObj.save(cards);
       startTime();
       setCards(cards.map((cardObj) => {
         cardObj.isOpen = false;
@@ -246,7 +206,7 @@ const GridGame: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isSaveGame()) {
+    if (!gameObj.isSave()) {
       closeOpenCards();
     } else {
       addSavedGame();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
-import getMinutes, { getSeconds } from './time';
+import timeObj from './timeObj';
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -22,8 +22,8 @@ interface IProps {
 const Menu: React.FC<IProps> = ({ errors, countSeconds, getNewGame }: IProps) => {
   const classes = useStyles();
 
-  const minutes: number = getMinutes(countSeconds);
-  const seconds: string = getSeconds(countSeconds);
+  const minutes: number = timeObj.getMinutes(countSeconds);
+  const seconds: string = timeObj.getSeconds(countSeconds);
 
   return (
     <div className={classes.menu}>

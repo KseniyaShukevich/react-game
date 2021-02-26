@@ -57,8 +57,15 @@ interface IProps {
 }
 
 const Card: React.FC<IProps> = ({
-  id, value, isOpen, setCardOpen, isEvenCardCount, isCorrectCard,
-  setInCorrectCard, closeWrangCards, addError,
+  id,
+  value,
+  isOpen,
+  setCardOpen,
+  isEvenCardCount,
+  isCorrectCard,
+  setInCorrectCard,
+  closeWrangCards,
+  addError,
 }: IProps) => {
   const classes = useStyles();
 

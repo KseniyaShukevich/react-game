@@ -1,8 +1,8 @@
 import React from 'react';
 import { EqualizerTwoTone } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import idLocalStorage from './idLocalStorage';
 import IStatistics from './IStatistics';
+import statisticsObj from './statisticsObj';
 
 const useStyles = makeStyles(() => ({
   icon: {
@@ -18,22 +18,6 @@ interface IProps {
   clearSetInterval: () => void
 }
 
-const getRating = (value: Array<IStatistics>) => {
-  value.forEach((item, index) => {
-    item.id = index + 1;
-  });
-};
-
-const getStatistics = (): Array<IStatistics> | null => {
-  const savedStatistics = localStorage.getItem(`${idLocalStorage}statistics`);
-  if (savedStatistics) {
-    const arrayStatistics: Array<IStatistics> = JSON.parse(savedStatistics);
-    getRating(arrayStatistics);
-    return arrayStatistics;
-  }
-  return null;
-};
-
 const StatisticsIcon: React.FC<IProps> = ({
   setStatistics,
   setIsStatistics,
@@ -44,7 +28,7 @@ const StatisticsIcon: React.FC<IProps> = ({
   const handleClick = (): void => {
     clearSetInterval();
     setIsStatistics(true);
-    setStatistics(getStatistics());
+    setStatistics(statisticsObj.get());
   };
 
   return (

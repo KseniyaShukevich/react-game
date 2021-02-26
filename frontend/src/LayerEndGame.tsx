@@ -3,7 +3,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import getMinutes, { getSeconds } from './time';
+import timeObj from './timeObj';
 
 const useStyles = makeStyles(() => ({
   overlayNone: {
@@ -39,8 +39,8 @@ interface IProps {
 const LayerEndGame: React.FC<IProps> = ({ countSeconds, errors }: IProps) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const classes = useStyles();
-  const minutes: number = getMinutes(countSeconds);
-  const seconds: string = getSeconds(countSeconds);
+  const minutes: number = timeObj.getMinutes(countSeconds);
+  const seconds: string = timeObj.getSeconds(countSeconds);
 
   useEffect(() => {
     setTimeout(() => setIsMounted(true), 1000);
