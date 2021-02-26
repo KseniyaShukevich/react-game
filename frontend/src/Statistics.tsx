@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
+  isEndGame: boolean
   statistics: Array<IStatistics>
   isStatistics: boolean
   setIsStatistics: (value: boolean) => void
@@ -45,6 +46,7 @@ interface IProps {
 }
 
 const Statistics: React.FC<IProps> = ({
+  isEndGame,
   statistics,
   isStatistics,
   setIsStatistics,
@@ -54,7 +56,7 @@ const Statistics: React.FC<IProps> = ({
 
   const onClose = () => {
     setIsStatistics(false);
-    startTime();
+    if (!isEndGame) startTime();
   };
 
   return (

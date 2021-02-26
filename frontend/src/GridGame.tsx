@@ -291,6 +291,7 @@ const GridGame: React.FC = () => {
           />
         </div>
         <Statistics
+          isEndGame={isEndGame}
           statistics={statistics}
           isStatistics={isStatistics}
           setIsStatistics={setIsStatistics}
