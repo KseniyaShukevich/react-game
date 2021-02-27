@@ -23,10 +23,10 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        //   {
-        //     from: path.resolve(__dirname, 'src/favicon.ico'),
-        //     to: path.resolve(__dirname, 'dist/favicon.ico'),
-        //   },
+        {
+          from: path.resolve(__dirname, 'src/favicon.png'),
+          to: path.resolve(__dirname, 'dist/favicon.png'),
+        },
         {
           from: path.resolve(__dirname, 'src/assets/images'),
           to: path.resolve(__dirname, 'dist/'),
