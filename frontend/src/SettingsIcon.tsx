@@ -1,8 +1,6 @@
 import React from 'react';
-import { Equalizer } from '@material-ui/icons';
+import { Settings } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import IStatistics from './IStatistics';
-import statisticsObj from './statisticsObj';
 
 const useStyles = makeStyles(() => ({
   icon: {
@@ -13,30 +11,27 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface IProps {
-  setStatistics: (value: Array<IStatistics> | null) => void
-  setIsStatistics: (value: boolean) => void
+  setIsSettings: (value: boolean) => void
   clearSetInterval: () => void
 }
 
-const StatisticsIcon: React.FC<IProps> = ({
-  setStatistics,
-  setIsStatistics,
+const SettingsIcon: React.FC<IProps> = ({
+  setIsSettings,
   clearSetInterval,
 }: IProps) => {
   const classes = useStyles();
 
   const handleClick = (): void => {
     clearSetInterval();
-    setIsStatistics(true);
-    setStatistics(statisticsObj.get());
+    setIsSettings(true);
   };
 
   return (
-    <Equalizer
+    <Settings
       className={classes.icon}
       onClick={handleClick}
     />
   );
 };
 
-export default StatisticsIcon;
+export default SettingsIcon;

@@ -24,14 +24,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.dark,
     paddingBottom: theme.spacing(2),
   },
-  heightZero: {
-    overflow: 'hidden',
-    height: 0,
-    transition: '1s',
-  },
-  height: {
-    height: '100px',
-    transition: '1s',
+  headingNoStatistics: {
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    color: theme.palette.primary.dark,
   },
   table: {
     minWidth: 330,
@@ -63,17 +59,27 @@ const Statistics: React.FC<IProps> = ({
   return (
     <Dialog open={isStatistics} onClose={onClose}>
       <div className={classes.containerTable}>
-        <Typography variant="h5" className={classes.heading}>Statistics</Typography>
+        {
+          statistics ? (
+            <Typography variant="h5" className={classes.heading}>statistics</Typography>
+          ) : (
+            <Typography variant="h5" className={classes.headingNoStatistics}>no statistics</Typography>
+          )
+        }
         <TableContainer component={Paper}>
           <Table className={classes.table} size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">№</TableCell>
-                <TableCell align="center">Score</TableCell>
-                <TableCell align="center">Time</TableCell>
-                <TableCell align="center">Errors</TableCell>
-              </TableRow>
-            </TableHead>
+            {
+              statistics ? (
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">№</TableCell>
+                    <TableCell align="center">Score</TableCell>
+                    <TableCell align="center">Time</TableCell>
+                    <TableCell align="center">Errors</TableCell>
+                  </TableRow>
+                </TableHead>
+              ) : ''
+            }
             <TableBody>
               {statistics?.map((row) => (
                 <TableRow key={row.id}>
