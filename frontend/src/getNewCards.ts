@@ -47,7 +47,7 @@ const getCardsObjects = (cards: Array<number>): Array<ICard> => {
       id: index,
       value: card,
       isCorrect: false,
-      isOpen: true,
+      isOpen: false,
     };
     return cardObject;
   });

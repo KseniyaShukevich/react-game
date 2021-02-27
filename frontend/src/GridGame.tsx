@@ -217,34 +217,33 @@ const GridGame: React.FC = () => {
   };
 
   const closeOpenCards = (): void => {
-    setTimeout(() => {
-      gameObj.save(cards);
-      playAudio(sound.current);
-      startTime();
-      setCards(cards.map((cardObj) => {
-        cardObj.isOpen = false;
-        return cardObj;
-      }));
-    }, 4000);
+    playAudio(sound.current);
+    if (isPlay) startTime();
+    setCards(cards.map((cardObj) => {
+      cardObj.isOpen = false;
+      return cardObj;
+    }));
+    gameObj.save(cards);
   };
 
-  const addSavedGame = (): void => {
-    if (!isEndGame && isPlay) {
-      startTime();
-    }
+  const openCards = (): void => {
     setCards(cards.map((cardObj) => {
-      if (!cardObj.isCorrect) {
-        cardObj.isOpen = false;
-      }
+      cardObj.isOpen = true;
       return cardObj;
     }));
   };
 
   useEffect(() => {
-    if (!gameObj.isSave()) {
-      closeOpenCards();
-    } else {
-      addSavedGame();
+    if (isPlay) {
+      if (!gameObj.isSave()) {
+        openCards();
+        setTimeout(() => closeOpenCards(), 4000);
+        gameObj.save(cards);
+      } else if (gameObj.isSave()) {;
+        if (!isEndGame && isPlay) startTime();
+      }
+    } else if (gameObj.isSave()) {
+      if (!isEndGame && isPlay) startTime();
     }
   }, [toggle, isPlay]);
 
