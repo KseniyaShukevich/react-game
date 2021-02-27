@@ -66,7 +66,7 @@ const Statistics: React.FC<IProps> = ({
   const minVolume: number = 0;
   const maxVolume: number = 100;
   const classes = useStyles();
-  const [volumeMusic, setVolumeMusic] = useState<number>(minVolume);
+  const [volumeMusic, setVolumeMusic] = useState<number>(maxVolume);
   const [volumeSound, setVolumeSound] = useState<number>(maxVolume);
 
   const toggleSound = (): void => {
@@ -81,8 +81,10 @@ const Statistics: React.FC<IProps> = ({
   const toggleMusic = (): void => {
     if (isMusic) {
       setVolumeMusic(minVolume);
+      music.current.volume = minVolume;
     } else {
       setVolumeMusic(maxVolume);
+      music.current.volume = 1;
     }
     setIsMusic(!isMusic);
   };

@@ -19,6 +19,7 @@ import clearLocalStorage from './clearLocalStorage';
 import timeObj from './timeObj';
 import errorsObj from './errorsObj';
 import statisticsObj from './statisticsObj';
+import LayerPlay from './LayerPlay';
 
 const useStyles = makeStyles((theme) => ({
   containerGame: {
@@ -61,8 +62,9 @@ const GridGame: React.FC = () => {
   const [statistics, setStatistics] = useState<Array<IStatistics> | null>(null);
   const [errors, setErrors] = useState<number>(() => errorsObj.getSaved());
   const [isEndGame, setIsEndGame] = useState<boolean>(() => gameObj.getIsEndGame());
-  const [isMusic, setIsMusic] = useState<boolean>(false);
+  const [isMusic, setIsMusic] = useState<boolean>(true);
   const [isSound, setIsSound] = useState<boolean>(true);
+  const [isPlay, setIsPlay] = useState<boolean>(false);
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
   const inputElMusic = useRef(null);
@@ -247,81 +249,85 @@ const GridGame: React.FC = () => {
   }, [toggle]);
 
   return (
-    <main>
-      {
-        isMusic && (
+    <>
+      {!isPlay && (
+      <LayerPlay
+        music={music}
+        setIsPlay={setIsPlay}
+      />
+      )}
+      <main>
         <Music music={music} />
-        )
-      }
-      {
+        {
         isSound && (
           <Sound sound={sound} />
         )
       }
-      <Container maxWidth="lg" className={classes.containerGame}>
-        <Menu
-          errors={errors}
-          countSeconds={countSeconds}
-          getNewGame={getNewGame}
-        />
-        <Grid container spacing={1} className={classes.box}>
-          {isEndGame && (
+        <Container maxWidth="lg" className={classes.containerGame}>
+          <Menu
+            errors={errors}
+            countSeconds={countSeconds}
+            getNewGame={getNewGame}
+          />
+          <Grid container spacing={1} className={classes.box}>
+            {isEndGame && (
             <LayerEndGame
               countSeconds={countSeconds}
               errors={errors}
             />
-          )}
-          {cards.map((card) => (
-            <Card
-              value={card.value}
-              isOpen={card.isOpen}
-              id={card.id}
-              setCardOpen={setCardOpen}
-              isEvenCardCount={isEvenCardCount}
-              isCorrectCard={isCorrectCard}
-              setInCorrectCard={setInCorrectCard}
-              closeWrangCards={closeWrangCards}
-              addError={addError}
-              key={card.id}
-            />
-          ))}
-        </Grid>
-        <div className={classes.container}>
-          <div className={classes.containerIcons}>
-            <StatisticsIcon
-              setStatistics={setStatistics}
-              setIsStatistics={setIsStatistics}
-              clearSetInterval={clearSetInterval}
-            />
-            <SettingsIcon
-              setIsSettings={setIsSettings}
-              clearSetInterval={clearSetInterval}
-            />
+            )}
+            {cards.map((card) => (
+              <Card
+                value={card.value}
+                isOpen={card.isOpen}
+                id={card.id}
+                setCardOpen={setCardOpen}
+                isEvenCardCount={isEvenCardCount}
+                isCorrectCard={isCorrectCard}
+                setInCorrectCard={setInCorrectCard}
+                closeWrangCards={closeWrangCards}
+                addError={addError}
+                key={card.id}
+              />
+            ))}
+          </Grid>
+          <div className={classes.container}>
+            <div className={classes.containerIcons}>
+              <StatisticsIcon
+                setStatistics={setStatistics}
+                setIsStatistics={setIsStatistics}
+                clearSetInterval={clearSetInterval}
+              />
+              <SettingsIcon
+                setIsSettings={setIsSettings}
+                clearSetInterval={clearSetInterval}
+              />
+            </div>
           </div>
-        </div>
-        <Statistics
-          isEndGame={isEndGame}
-          statistics={statistics}
-          isStatistics={isStatistics}
-          setIsStatistics={setIsStatistics}
-          startTime={startTime}
-        />
-        <Settings
-          isMusic={isMusic}
-          isSound={isSound}
-          setIsMusic={setIsMusic}
-          setIsSound={setIsSound}
-          isEndGame={isEndGame}
-          isSettings={isSettings}
-          setIsSettings={setIsSettings}
-          startTime={startTime}
-          inputElMusic={inputElMusic}
-          inputElSound={inputElSound}
-          music={music}
-          sound={sound}
-        />
-      </Container>
-    </main>
+          <Statistics
+            isEndGame={isEndGame}
+            statistics={statistics}
+            isStatistics={isStatistics}
+            setIsStatistics={setIsStatistics}
+            startTime={startTime}
+          />
+          <Settings
+            isMusic={isMusic}
+            isSound={isSound}
+            setIsMusic={setIsMusic}
+            setIsSound={setIsSound}
+            isEndGame={isEndGame}
+            isSettings={isSettings}
+            setIsSettings={setIsSettings}
+            startTime={startTime}
+            inputElMusic={inputElMusic}
+            inputElSound={inputElSound}
+            music={music}
+            sound={sound}
+          />
+        </Container>
+      </main>
+    </>
   );
 };
 
