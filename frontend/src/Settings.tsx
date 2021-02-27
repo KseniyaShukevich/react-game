@@ -79,40 +79,26 @@ const Statistics: React.FC<IProps> = ({
     }
   };
 
-  const toggleSound = (): void => {
-    if (isSound) {
-      setVolumeSound(minVolume);
-      sound.current.volume = minVolume;
+  const toggleAudio = (
+    isAudio: boolean, setIsFunc: any, setVolumeFunc: any, refEl: any, name: string,
+  ): void => {
+    if (isAudio) {
+      setVolumeFunc(minVolume);
+      refEl.current.volume = minVolume;
     } else {
-      setVolumeSound(audioObj.get('Sound') * maxVolume);
-      sound.current.volume = audioObj.get('Sound');
+      setVolumeFunc(audioObj.get(`${name}`) * maxVolume);
+      refEl.current.volume = audioObj.get(`${name}`);
     }
-    setIsSound(!isSound);
+    setIsFunc(!isAudio);
   };
 
-  const toggleMusic = (): void => {
-    if (isMusic) {
-      setVolumeMusic(minVolume);
-      music.current.volume = minVolume;
-    } else {
-      setVolumeMusic(audioObj.get('Music') * maxVolume);
-      music.current.volume = audioObj.get('Music');
-    }
-    setIsMusic(!isMusic);
-  };
-
-  const changeVolumeMusic = (): void => {
-    music.current.volume = inputElMusic.current.value / maxVolume;
-    setVolumeMusic(inputElMusic.current.value);
-    if (!isMusic && (+inputElMusic.current.value)) setIsMusic(true);
-    if (!(+inputElMusic.current.value)) setIsMusic(false);
-  };
-
-  const changeVolumeSound = (): void => {
-    sound.current.volume = inputElSound.current.value / maxVolume;
-    setVolumeSound(inputElSound.current.value);
-    if (!isSound && (+inputElSound.current.value)) setIsSound(true);
-    if (!(+inputElSound.current.value)) setIsSound(false);
+  const changeVolume = (
+    refEl: any, inputValue: number, setVolumeFunc: any, isAudio: boolean, setIsFunc: any,
+  ): void => {
+    refEl.current.volume = inputValue / maxVolume;
+    setVolumeFunc(inputValue);
+    if (!isAudio && inputValue) setIsFunc(true);
+    if (!inputValue) setIsFunc(false);
   };
 
   const onClose = (): void => {
@@ -135,7 +121,7 @@ const Statistics: React.FC<IProps> = ({
       setIsSound(false);
       sound.current.volume = 0;
       setVolumeSound(0);
-    };
+    }
   };
 
   useEffect(() => {
@@ -152,7 +138,7 @@ const Statistics: React.FC<IProps> = ({
         <Typography variant="h5" className={classes.heading}>settings</Typography>
         <div className={classes.container}>
           <Typography variant="subtitle1" className={classes.subtitle}>Music</Typography>
-          <div onClick={toggleMusic} className={classes.icon}>
+          <div onClick={() => toggleAudio(isMusic, setIsMusic, setVolumeMusic, music, 'Music')} className={classes.icon}>
             {
               isMusic
                 ? <MusicNote />
@@ -166,12 +152,12 @@ const Statistics: React.FC<IProps> = ({
             min={minVolume}
             max={maxVolume}
             type="range"
-            onChange={changeVolumeMusic}
+            onChange={() => changeVolume(music, inputElMusic.current.value, setVolumeMusic, isMusic, setIsMusic)}
           />
         </div>
         <div className={classes.container}>
           <Typography variant="subtitle1" className={classes.subtitle}>Sound</Typography>
-          <div onClick={toggleSound} className={classes.icon}>
+          <div onClick={() => toggleAudio(isSound, setIsSound, setVolumeSound, sound, 'Sound')} className={classes.icon}>
             {
               isSound
                 ? <VolumeUp />
@@ -185,7 +171,7 @@ const Statistics: React.FC<IProps> = ({
             min={minVolume}
             max={maxVolume}
             type="range"
-            onChange={changeVolumeSound}
+            onChange={() => changeVolume(sound, inputElSound.current.value, setVolumeSound, isSound, setIsSound)}
           />
         </div>
       </div>
