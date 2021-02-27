@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -7,6 +7,7 @@ import {
 import {
   MusicNote, MusicOff, VolumeUp, VolumeOff,
 } from '@material-ui/icons';
+import audioObj from './audioObj';
 
 const useStyles = makeStyles((theme) => ({
   containerSettings: {
@@ -66,14 +67,18 @@ const Statistics: React.FC<IProps> = ({
   const minVolume: number = 0;
   const maxVolume: number = 100;
   const classes = useStyles();
-  const [volumeMusic, setVolumeMusic] = useState<number>(maxVolume);
-  const [volumeSound, setVolumeSound] = useState<number>(maxVolume);
+  const [volumeMusic, setVolumeMusic] = useState<number>(audioObj.get('music') * maxVolume);
+  const [volumeSound, setVolumeSound] = useState<number>(audioObj.get('sound') * maxVolume);
 
   const toggleSound = (): void => {
     if (isSound) {
       setVolumeSound(minVolume);
+      sound.current.volume = minVolume;
+      audioObj.save('sound', minVolume);
     } else {
       setVolumeSound(maxVolume);
+      sound.current.volume = 1;
+      audioObj.save('sound', 1);
     }
     setIsSound(!isSound);
   };
@@ -82,27 +87,43 @@ const Statistics: React.FC<IProps> = ({
     if (isMusic) {
       setVolumeMusic(minVolume);
       music.current.volume = minVolume;
+      audioObj.save('music', minVolume);
     } else {
       setVolumeMusic(maxVolume);
       music.current.volume = 1;
+      audioObj.save('music', 1);
     }
     setIsMusic(!isMusic);
   };
 
   const changeVolumeMusic = (): void => {
     music.current.volume = inputElMusic.current.value / maxVolume;
+    audioObj.save('music', music.current.volume);
     setVolumeMusic(inputElMusic.current.value);
+    if (!isMusic && (+inputElMusic.current.value)) setIsMusic(true);
+    if (!(+inputElMusic.current.value)) setIsMusic(false);
   };
 
   const changeVolumeSound = (): void => {
     sound.current.volume = inputElSound.current.value / maxVolume;
+    audioObj.save('sound', sound.current.volume);
     setVolumeSound(inputElSound.current.value);
+    if (!isSound && (+inputElSound.current.value)) setIsSound(true);
+    if (!(+inputElSound.current.value)) setIsSound(false);
   };
 
   const onClose = (): void => {
     setIsSettings(false);
     if (!isEndGame) startTime();
   };
+
+  useEffect(() => {
+    const vMusic: number = audioObj.get('music');
+    const vSound: number = audioObj.get('sound');
+
+    if (!vMusic) setIsMusic(false);
+    if (!vSound) setIsSound(false);
+  }, []);
 
   return (
     <Dialog open={isSettings} onClose={onClose}>

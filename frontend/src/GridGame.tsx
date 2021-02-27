@@ -258,11 +258,7 @@ const GridGame: React.FC = () => {
       )}
       <main>
         <Music music={music} />
-        {
-        isSound && (
-          <Sound sound={sound} />
-        )
-      }
+        <Sound sound={sound} />
         <Container maxWidth="lg" className={classes.containerGame}>
           <Menu
             errors={errors}
