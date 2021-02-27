@@ -6,7 +6,7 @@ interface IProps {
 }
 
 const Music: React.FC<IProps> = ({ sound }: IProps) => {
-  const volumeSound: number = audioObj.get('sound');
+  const volumeSound: number = audioObj.get('Sound');
 
   useEffect(() => {
     sound.current.volume = volumeSound;

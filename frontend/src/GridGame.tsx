@@ -229,7 +229,7 @@ const GridGame: React.FC = () => {
   };
 
   const addSavedGame = (): void => {
-    if (!isEndGame) {
+    if (!isEndGame && isPlay) {
       startTime();
     }
     setCards(cards.map((cardObj) => {
@@ -246,7 +246,7 @@ const GridGame: React.FC = () => {
     } else {
       addSavedGame();
     }
-  }, [toggle]);
+  }, [toggle, isPlay]);
 
   return (
     <>

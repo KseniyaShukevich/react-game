@@ -67,18 +67,25 @@ const Statistics: React.FC<IProps> = ({
   const minVolume: number = 0;
   const maxVolume: number = 100;
   const classes = useStyles();
-  const [volumeMusic, setVolumeMusic] = useState<number>(audioObj.get('music') * maxVolume);
-  const [volumeSound, setVolumeSound] = useState<number>(audioObj.get('sound') * maxVolume);
+  const [volumeMusic, setVolumeMusic] = useState<number>(audioObj.get('Music') * maxVolume);
+  const [volumeSound, setVolumeSound] = useState<number>(audioObj.get('Sound') * maxVolume);
+
+  const saveAudio = (isAudio: boolean, volume: number, name: string): void => {
+    if (isAudio) {
+      audioObj.save(`${name}`, volume);
+      audioObj.remove(`${name}No`);
+    } else {
+      audioObj.save(`${name}No`, 1);
+    }
+  };
 
   const toggleSound = (): void => {
     if (isSound) {
       setVolumeSound(minVolume);
       sound.current.volume = minVolume;
-      audioObj.save('sound', minVolume);
     } else {
-      setVolumeSound(maxVolume);
-      sound.current.volume = 1;
-      audioObj.save('sound', 1);
+      setVolumeSound(audioObj.get('Sound') * maxVolume);
+      sound.current.volume = audioObj.get('Sound');
     }
     setIsSound(!isSound);
   };
@@ -87,18 +94,15 @@ const Statistics: React.FC<IProps> = ({
     if (isMusic) {
       setVolumeMusic(minVolume);
       music.current.volume = minVolume;
-      audioObj.save('music', minVolume);
     } else {
-      setVolumeMusic(maxVolume);
-      music.current.volume = 1;
-      audioObj.save('music', 1);
+      setVolumeMusic(audioObj.get('Music') * maxVolume);
+      music.current.volume = audioObj.get('Music');
     }
     setIsMusic(!isMusic);
   };
 
   const changeVolumeMusic = (): void => {
     music.current.volume = inputElMusic.current.value / maxVolume;
-    audioObj.save('music', music.current.volume);
     setVolumeMusic(inputElMusic.current.value);
     if (!isMusic && (+inputElMusic.current.value)) setIsMusic(true);
     if (!(+inputElMusic.current.value)) setIsMusic(false);
@@ -106,7 +110,6 @@ const Statistics: React.FC<IProps> = ({
 
   const changeVolumeSound = (): void => {
     sound.current.volume = inputElSound.current.value / maxVolume;
-    audioObj.save('sound', sound.current.volume);
     setVolumeSound(inputElSound.current.value);
     if (!isSound && (+inputElSound.current.value)) setIsSound(true);
     if (!(+inputElSound.current.value)) setIsSound(false);
@@ -114,15 +117,33 @@ const Statistics: React.FC<IProps> = ({
 
   const onClose = (): void => {
     setIsSettings(false);
+    saveAudio(isMusic, music.current.volume, 'Music');
+    saveAudio(isSound, sound.current.volume, 'Sound');
     if (!isEndGame) startTime();
   };
 
-  useEffect(() => {
-    const vMusic: number = audioObj.get('music');
-    const vSound: number = audioObj.get('sound');
+  const doNoMusic = (vMusic: boolean): void => {
+    if (vMusic) {
+      setIsMusic(false);
+      music.current.volume = 0;
+      setVolumeMusic(0);
+    }
+  };
 
-    if (!vMusic) setIsMusic(false);
-    if (!vSound) setIsSound(false);
+  const doNoSound = (vSound: boolean): void => {
+    if (vSound) {
+      setIsSound(false);
+      sound.current.volume = 0;
+      setVolumeSound(0);
+    };
+  };
+
+  useEffect(() => {
+    const vMusic: boolean = audioObj.isNoVolume('Music');
+    const vSound: boolean = audioObj.isNoVolume('Sound');
+
+    doNoMusic(vMusic);
+    doNoSound(vSound);
   }, []);
 
   return (
