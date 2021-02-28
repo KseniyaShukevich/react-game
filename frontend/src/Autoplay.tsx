@@ -14,7 +14,8 @@ interface IProps {
 }
 
 const Autoplay: React.FC<IProps> = ({
-  isAutoplay, setIsAutoplay, isEndGame, setIsEndGame, cards, getNewGame, cardClick,
+  isAutoplay, setIsAutoplay,
+  isEndGame, setIsEndGame, cards, getNewGame, cardClick,
 }: IProps) => {
   const buffCards = useRef<Array<number>>([]);
   const [counter, setCounter] = useState<number>(0);
@@ -25,15 +26,9 @@ const Autoplay: React.FC<IProps> = ({
     return correctCard;
   };
 
-  const getFortuneCard = (): ICard => {
-    const fortuneCard = cards.find((item) => (item.value === buffCards.current[0]));
-    return fortuneCard;
-  };
-
   const autoplay = (): void => {
     if (buffCards.current.length) {
-      const numberFunc: number = getRandomNumber(2);
-      const newCard: ICard = numberFunc ? getCorrectCard() : getFortuneCard();
+      const newCard: ICard = getCorrectCard();
       if (newCard) {
         buffCards.current.pop();
         cardClick(newCard.isOpen, newCard.id, newCard.value);
@@ -71,7 +66,15 @@ const Autoplay: React.FC<IProps> = ({
   }, [isAutoplay, isEndGame, counter]);
 
   return (
-    <Button variant="outlined" color="primary" onClick={handleClick}>autoplay</Button>
+    <>
+      {
+        isAutoplay ? (
+          <Button variant="outlined" color="primary">autoplay</Button>
+        ) : (
+          <Button variant="outlined" color="primary" onClick={handleClick}>autoplay</Button>
+        )
+      }
+    </>
   );
 };
 

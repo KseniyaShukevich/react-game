@@ -14,12 +14,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
+  isAnimation: boolean
+  isAutoplay: boolean
   errors: number
   countSeconds: number
   getNewGame: () => void
 }
 
-const Menu: React.FC<IProps> = ({ errors, countSeconds, getNewGame }: IProps) => {
+const Menu: React.FC<IProps> = ({ isAnimation, isAutoplay, errors, countSeconds, getNewGame }: IProps) => {
   const classes = useStyles();
 
   const minutes: number = timeObj.getMinutes(countSeconds);
@@ -43,7 +45,13 @@ const Menu: React.FC<IProps> = ({ errors, countSeconds, getNewGame }: IProps) =>
           {errors}
         </Typography>
       </div>
-      <Button variant="contained" color="primary" onClick={getNewGame}>New game</Button>
+      {
+        (isAnimation || isAutoplay) ? (
+          <Button variant="contained" color="primary">New game</Button>
+        ) : (
+          <Button variant="contained" color="primary" onClick={getNewGame}>New game</Button>
+        )
+      }
     </div>
   );
 };

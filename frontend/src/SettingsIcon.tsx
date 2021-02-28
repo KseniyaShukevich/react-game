@@ -11,18 +11,20 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface IProps {
+  isAutoplay: boolean
   setIsSettings: (value: boolean) => void
   clearSetInterval: () => void
 }
 
 const SettingsIcon: React.FC<IProps> = ({
+  isAutoplay,
   setIsSettings,
   clearSetInterval,
 }: IProps) => {
   const classes = useStyles();
 
   const handleClick = (): void => {
-    clearSetInterval();
+    if (!isAutoplay) clearSetInterval();
     setIsSettings(true);
   };
 

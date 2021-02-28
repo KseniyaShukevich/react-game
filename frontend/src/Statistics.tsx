@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
+  isAutoplay: boolean
   isEndGame: boolean
   statistics: Array<IStatistics>
   isStatistics: boolean
@@ -43,6 +44,7 @@ interface IProps {
 }
 
 const Statistics: React.FC<IProps> = ({
+  isAutoplay,
   isEndGame,
   statistics,
   isStatistics,
@@ -53,7 +55,7 @@ const Statistics: React.FC<IProps> = ({
 
   const onClose = () => {
     setIsStatistics(false);
-    if (!isEndGame) startTime();
+    if (!isEndGame && !isAutoplay) startTime();
   };
 
   return (
