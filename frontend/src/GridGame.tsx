@@ -20,6 +20,7 @@ import timeObj from './timeObj';
 import errorsObj from './errorsObj';
 import statisticsObj from './statisticsObj';
 import LayerPlay from './LayerPlay';
+import Autoplay from './Autoplay';
 
 const useStyles = makeStyles((theme) => ({
   containerGame: {
@@ -33,9 +34,8 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     width: '100%',
-    // display: 'flex',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
     padding: `${theme.spacing(1)}px 0`,
   },
   containerIcons: {
@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
 const GridGame: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
+  // const setCards = (cards: Array<ICard>) => {lSetCards(cards)};
   const [toggle, setToggle] = useState<boolean>(false);
   const [countSeconds, setCountSeconds] = useState<number>(() => timeObj.getSavedSeconds());
   const [isStatistics, setIsStatistics] = useState<boolean>(false);
@@ -65,6 +66,7 @@ const GridGame: React.FC = () => {
   const [isMusic, setIsMusic] = useState<boolean>(true);
   const [isSound, setIsSound] = useState<boolean>(true);
   const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [isAutoplay, setIsAutoplay] = useState<boolean>(false);
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
   const inputElMusic = useRef(null);
@@ -174,7 +176,7 @@ const GridGame: React.FC = () => {
     }
   };
 
-  const getNewGame = (): void => {
+  const getNewGame = (cb?: () => void): void => {
     score.current = maxScore;
     setIsEndGame(false);
     closeCards();
@@ -186,6 +188,7 @@ const GridGame: React.FC = () => {
       playAudio(sound.current);
       setCards(getNewCards());
       setToggle(!toggle);
+      if (cb) cb();
     }, 1100);
   };
 
@@ -242,6 +245,26 @@ const GridGame: React.FC = () => {
     saveCloseCards();
   };
 
+  const checkCards = (value: number): void => {
+    if (isCorrectCard(value)) {
+      setInCorrectCard(value);
+    } else {
+      setTimeout(() => {
+        addError();
+        closeWrangCards();
+      }, 1000);
+    }
+  };
+
+  const cardClick = (isOpen: boolean, id: number, value: number) => {
+    if (!isOpen) {
+      setCardOpen(id);
+      if (isEvenCardCount()) {
+        checkCards(value);
+      }
+    }
+  };
+
   useEffect(() => {
     if (isPlay) {
       if (!gameObj.isSave()) {
@@ -281,15 +304,10 @@ const GridGame: React.FC = () => {
             )}
             {cards.map((card) => (
               <Card
+                cardClick={cardClick}
                 value={card.value}
                 isOpen={card.isOpen}
                 id={card.id}
-                setCardOpen={setCardOpen}
-                isEvenCardCount={isEvenCardCount}
-                isCorrectCard={isCorrectCard}
-                setInCorrectCard={setInCorrectCard}
-                closeWrangCards={closeWrangCards}
-                addError={addError}
                 key={card.id}
               />
             ))}
@@ -304,6 +322,17 @@ const GridGame: React.FC = () => {
               <SettingsIcon
                 setIsSettings={setIsSettings}
                 clearSetInterval={clearSetInterval}
+              />
+            </div>
+            <div>
+              <Autoplay
+                isAutoplay={isAutoplay}
+                setIsAutoplay={setIsAutoplay}
+                isEndGame={isEndGame}
+                setIsEndGame={setIsEndGame}
+                getNewGame={getNewGame}
+                cards={cards}
+                cardClick={cardClick}
               />
             </div>
           </div>

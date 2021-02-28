@@ -48,54 +48,24 @@ interface IProps {
   id: number
   value: number
   isOpen: boolean
-  setCardOpen: (value: number) => void
-  isEvenCardCount: () => boolean
-  isCorrectCard: (value: number) => boolean
-  setInCorrectCard: (value: number) => void
-  closeWrangCards: () => void
-  addError: () => void
+  cardClick: (isOpen: boolean, id: number, value: number) => void
 }
 
 const Card: React.FC<IProps> = ({
   id,
   value,
   isOpen,
-  setCardOpen,
-  isEvenCardCount,
-  isCorrectCard,
-  setInCorrectCard,
-  closeWrangCards,
-  addError,
+  cardClick,
 }: IProps) => {
   const classes = useStyles();
-
-  const checkCards = (): void => {
-    if (isCorrectCard(value)) {
-      setInCorrectCard(value);
-    } else {
-      setTimeout(() => {
-        addError();
-        closeWrangCards();
-      }, 1000);
-    }
-  };
-
-  const handleClick = () => {
-    if (!isOpen) {
-      setCardOpen(id);
-      if (isEvenCardCount()) {
-        checkCards();
-      }
-    }
-  };
 
   return (
     <Grid item xs={2}>
       <div className={classes.card}>
-        <div className={!isOpen ? classes.frontInBack : classes.front} onClick={handleClick}>
+        <div className={!isOpen ? classes.frontInBack : classes.front}>
           <img className={classes.image} src={`./${value}.jpg`} alt="card" />
         </div>
-        <div className={!isOpen ? classes.backInFront : classes.back} onClick={handleClick}>
+        <div className={!isOpen ? classes.backInFront : classes.back} onClick={() => cardClick(isOpen, id, value)}>
           <img className={classes.image} src="./back.jpg" alt="card" />
         </div>
       </div>

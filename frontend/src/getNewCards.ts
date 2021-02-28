@@ -1,10 +1,6 @@
 import ICard from './ICard';
 import idLocalStorage from './idLocalStorage';
-
-const getRandomNumber = (maxCount: number): number => {
-  const rand: number = Math.random() * (maxCount);
-  return Math.floor(rand);
-};
+import getRandomNumber from './getRandomNumber';
 
 const getCardsNumbers = (): Array<number> => {
   const maxCountCards: number = 52;
