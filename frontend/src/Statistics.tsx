@@ -66,10 +66,10 @@ const Statistics: React.FC<IProps> = ({
             <Typography variant="h5" className={classes.headingNoStatistics}>no statistics</Typography>
           )
         }
-        <TableContainer component={Paper}>
-          <Table className={classes.table} size="small" aria-label="a dense table">
-            {
-              statistics ? (
+        {
+          statistics ? (
+            <TableContainer component={Paper}>
+              <Table className={classes.table} size="small" aria-label="a dense table">
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">№</TableCell>
@@ -78,24 +78,24 @@ const Statistics: React.FC<IProps> = ({
                     <TableCell align="center">Errors</TableCell>
                   </TableRow>
                 </TableHead>
-              ) : ''
-            }
-            <TableBody>
-              {statistics?.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell align="center">{row.id}</TableCell>
-                  <TableCell align="center">{row.score}</TableCell>
-                  <TableCell align="center">
-                    {timeObj.getMinutes(row.countSeconds)}
-                    :
-                    {timeObj.getSeconds(row.countSeconds)}
-                  </TableCell>
-                  <TableCell align="center">{row.errors}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                <TableBody>
+                  {statistics?.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell align="center">{row.id}</TableCell>
+                      <TableCell align="center">{row.score}</TableCell>
+                      <TableCell align="center">
+                        {timeObj.getMinutes(row.countSeconds)}
+                        :
+                        {timeObj.getSeconds(row.countSeconds)}
+                      </TableCell>
+                      <TableCell align="center">{row.errors}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : ''
+        }
       </div>
     </Dialog>
   );
