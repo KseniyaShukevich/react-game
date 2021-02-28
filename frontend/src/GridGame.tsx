@@ -226,11 +226,20 @@ const GridGame: React.FC = () => {
     gameObj.save(cards);
   };
 
+  const saveCloseCards = (): void => {
+    const newCards = cards.map((cardObj) => {
+      const newObj: ICard = { ...cardObj, isOpen: false };
+      return newObj;
+    });
+    gameObj.save(newCards);
+  };
+
   const openCards = (): void => {
     setCards(cards.map((cardObj) => {
       cardObj.isOpen = true;
       return cardObj;
     }));
+    saveCloseCards();
   };
 
   useEffect(() => {
@@ -238,8 +247,7 @@ const GridGame: React.FC = () => {
       if (!gameObj.isSave()) {
         openCards();
         setTimeout(() => closeOpenCards(), 4000);
-        gameObj.save(cards);
-      } else if (gameObj.isSave()) {;
+      } else if (gameObj.isSave()) {
         if (!isEndGame && isPlay) startTime();
       }
     } else if (gameObj.isSave()) {

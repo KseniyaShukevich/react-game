@@ -47,7 +47,6 @@ const LayerPlay: React.FC<IProps> = ({ music, setIsPlay }: IProps) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const handleClick = (): void => {
-
     music.current.play();
     setIsMounted(true);
     setTimeout(() => setIsPlay(true), 500);
