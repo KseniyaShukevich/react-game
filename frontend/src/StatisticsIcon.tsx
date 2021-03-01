@@ -28,7 +28,9 @@ const StatisticsIcon: React.FC<IProps> = ({
   const classes = useStyles();
 
   const handleClick = (): void => {
-    if (!isAutoplay) clearSetInterval();
+    if (!isAutoplay) {
+      clearSetInterval();
+    }
     setIsStatistics(true);
     setStatistics(statisticsObj.get());
   };

@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
     top: 0,
     left: 0,
     background: 'rgba(255, 255, 255, 0.8)',
-    transition: 'opacity 1s',
+    transition: 'opacity 0.5s',
   },
 }));
 interface IProps {

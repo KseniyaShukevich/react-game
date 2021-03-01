@@ -36,35 +36,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
-  isAutoplay: boolean
   isMusic: boolean
   isSound: boolean
   music: any
   sound: any
   inputElMusic: any
   inputElSound: any
-  isEndGame: boolean
   isSettings: boolean
   setIsSettings: (value: boolean) => void
   setIsMusic: (value: boolean) => void
   setIsSound: (value: boolean) => void
-  startTime: () => void
 }
 
 const Statistics: React.FC<IProps> = ({
-  isAutoplay,
   isMusic,
   isSound,
   music,
   sound,
   inputElMusic,
   inputElSound,
-  isEndGame,
   isSettings,
   setIsSettings,
   setIsMusic,
   setIsSound,
-  startTime,
 }: IProps) => {
   const minVolume: number = 0;
   const maxVolume: number = 100;
@@ -107,7 +101,6 @@ const Statistics: React.FC<IProps> = ({
     setIsSettings(false);
     saveAudio(isMusic, music.current.volume, 'Music');
     saveAudio(isSound, sound.current.volume, 'Sound');
-    if (!isEndGame && !isAutoplay) startTime();
   };
 
   const doNoMusic = (vMusic: boolean): void => {

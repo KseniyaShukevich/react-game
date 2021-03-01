@@ -4,6 +4,8 @@ import getRandomNumber from './getRandomNumber';
 import ICard from './ICard';
 
 interface IProps {
+  count: any
+  isAnimation: boolean
   isAutoplay: boolean
   setIsAutoplay: (value: boolean) => void
   isEndGame: boolean
@@ -14,7 +16,7 @@ interface IProps {
 }
 
 const Autoplay: React.FC<IProps> = ({
-  isAutoplay, setIsAutoplay,
+  isAutoplay, setIsAutoplay, isAnimation, count,
   isEndGame, setIsEndGame, cards, getNewGame, cardClick,
 }: IProps) => {
   const buffCards = useRef<Array<number>>([]);
@@ -43,6 +45,7 @@ const Autoplay: React.FC<IProps> = ({
   };
 
   const handleClick = (): void => {
+    count.current = 0;
     getNewGame(() => {
       setIsAutoplay(true);
       setIsEndGame(false);
@@ -68,7 +71,7 @@ const Autoplay: React.FC<IProps> = ({
   return (
     <>
       {
-        isAutoplay ? (
+        (isAnimation || isAutoplay) ? (
           <Button variant="outlined" color="primary">autoplay</Button>
         ) : (
           <Button variant="outlined" color="primary" onClick={handleClick}>autoplay</Button>

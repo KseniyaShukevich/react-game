@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
+  count: any
   isAnimation: boolean
   isAutoplay: boolean
   errors: number
@@ -21,11 +22,19 @@ interface IProps {
   getNewGame: () => void
 }
 
-const Menu: React.FC<IProps> = ({ isAnimation, isAutoplay, errors, countSeconds, getNewGame }: IProps) => {
+const Menu: React.FC<IProps> = ({
+  isAnimation, isAutoplay, errors,
+  countSeconds, getNewGame, count,
+}: IProps) => {
   const classes = useStyles();
 
   const minutes: number = timeObj.getMinutes(countSeconds);
   const seconds: string = timeObj.getSeconds(countSeconds);
+
+  const handleClick = () => {
+    count.current = 1;
+    getNewGame();
+  };
 
   return (
     <div className={classes.menu}>
@@ -49,7 +58,7 @@ const Menu: React.FC<IProps> = ({ isAnimation, isAutoplay, errors, countSeconds,
         (isAnimation || isAutoplay) ? (
           <Button variant="contained" color="primary">New game</Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={getNewGame}>New game</Button>
+          <Button variant="contained" color="primary" onClick={handleClick}>New game</Button>
         )
       }
     </div>

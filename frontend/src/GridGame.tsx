@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState, useEffect, useRef,
+} from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import LayerEndGame from './LayerEndGame';
@@ -61,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
 const GridGame: React.FC = () => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
-  // const setCards = (cards: Array<ICard>) => {lSetCards(cards)};
   const [toggle, setToggle] = useState<boolean>(false);
   const [countSeconds, setCountSeconds] = useState<number>(() => timeObj.getSavedSeconds());
   const [isStatistics, setIsStatistics] = useState<boolean>(false);
@@ -80,6 +81,7 @@ const GridGame: React.FC = () => {
   const inputElSound = useRef(null);
   const music = useRef(null);
   const sound = useRef(null);
+  const count = useRef<number>(1);
 
   const addError = (): void => {
     setErrors((prev) => {
@@ -90,13 +92,15 @@ const GridGame: React.FC = () => {
   };
 
   const startTime = (): void => {
-    idIntervals.current.push(setInterval(() => {
-      setCountSeconds((prev) => {
-        timeObj.save(prev + 1);
-        score.current -= 1;
-        return prev + 1;
-      });
-    }, 1000));
+    if (!idIntervals.current.length) {
+      idIntervals.current.push(setInterval(() => {
+        setCountSeconds((prev) => {
+          if (count.current !== 0) timeObj.save(prev + 1);
+          score.current -= 1;
+          return prev + 1;
+        });
+      }, 1000));
+    }
   };
 
   const playAudio = (el: HTMLAudioElement): void => {
@@ -196,7 +200,7 @@ const GridGame: React.FC = () => {
       playAudio(sound.current);
       setCards(getNewCards());
       setToggle(!toggle);
-      if (cb) cb();
+      if (typeof cb === 'function') cb();
     }, 1100);
   };
 
@@ -216,8 +220,10 @@ const GridGame: React.FC = () => {
     if (countCorrectCard === cards.length) {
       clearSetInterval();
       setIsEndGame(true);
-      // statisticsObj.save(score.current, countSeconds, errors);
-      gameObj.saveIsEndGame();
+      if (count.current !== 0) {
+        statisticsObj.save(score.current, countSeconds, errors);
+        gameObj.saveIsEndGame();
+      }
     }
   };
 
@@ -228,7 +234,7 @@ const GridGame: React.FC = () => {
       }
       return cardObj;
     });
-    gameObj.save(cards);
+    if (count.current !== 0) gameObj.save(cards);
     checkEndGame();
   };
 
@@ -239,7 +245,7 @@ const GridGame: React.FC = () => {
       cardObj.isOpen = false;
       return cardObj;
     }));
-    gameObj.save(cards);
+    if (count.current !== 0) gameObj.save(cards);
   };
 
   const saveCloseCards = (): void => {
@@ -247,7 +253,7 @@ const GridGame: React.FC = () => {
       const newObj: ICard = { ...cardObj, isOpen: false };
       return newObj;
     });
-    gameObj.save(newCards);
+    if (count.current !== 0) gameObj.save(newCards);
   };
 
   const openCards = (): void => {
@@ -279,14 +285,8 @@ const GridGame: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isEndGame && !isAutoplay) {
-      statisticsObj.save(score.current, countSeconds, errors);
-    }
-  }, [isEndGame]);
-
-  useEffect(() => {
     if (isPlay) {
-      if (!gameObj.isSave()) {
+      if (!gameObj.isSave() && !isEndGame) {
         openCards();
         setTimeout(() => {
           closeOpenCards();
@@ -295,12 +295,12 @@ const GridGame: React.FC = () => {
           }, 1000);
         }, 4000);
       } else if (gameObj.isSave()) {
-        if (!isEndGame && isPlay) startTime();
+        if (!isEndGame && isPlay && !isStatistics && !isSettings) startTime();
       }
     } else if (gameObj.isSave()) {
-      if (!isEndGame && isPlay) startTime();
+      if (!isEndGame && isPlay && !isStatistics && !isSettings) startTime();
     }
-  }, [toggle, isPlay]);
+  }, [toggle, isPlay, isStatistics, isSettings]);
 
   return (
     <>
@@ -315,6 +315,7 @@ const GridGame: React.FC = () => {
         <Sound sound={sound} />
         <Container maxWidth="lg" className={classes.containerGame}>
           <Menu
+            count={count}
             isAnimation={isAnimation}
             isAutoplay={isAutoplay}
             errors={errors}
@@ -355,6 +356,8 @@ const GridGame: React.FC = () => {
             </div>
             <div>
               <Autoplay
+                count={count}
+                isAnimation={isAnimation}
                 isAutoplay={isAutoplay}
                 setIsAutoplay={setIsAutoplay}
                 isEndGame={isEndGame}
@@ -366,23 +369,17 @@ const GridGame: React.FC = () => {
             </div>
           </div>
           <Statistics
-            isAutoplay={isAutoplay}
-            isEndGame={isEndGame}
             statistics={statistics}
             isStatistics={isStatistics}
             setIsStatistics={setIsStatistics}
-            startTime={startTime}
           />
           <Settings
             isMusic={isMusic}
             isSound={isSound}
-            isAutoplay={isAutoplay}
             setIsMusic={setIsMusic}
             setIsSound={setIsSound}
-            isEndGame={isEndGame}
             isSettings={isSettings}
             setIsSettings={setIsSettings}
-            startTime={startTime}
             inputElMusic={inputElMusic}
             inputElSound={inputElSound}
             music={music}
