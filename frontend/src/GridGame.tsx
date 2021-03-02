@@ -23,6 +23,7 @@ import errorsObj from './errorsObj';
 import statisticsObj from './statisticsObj';
 import LayerPlay from './LayerPlay';
 import Autoplay from './Autoplay';
+import levelObj from './levelObj';
 
 const useStyles = makeStyles((theme) => ({
   containerGame: {
@@ -33,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
+  },
+  containerNotLight: {
+    display: 'flex',
+    width: '100%',
+    position: 'relative',
   },
   noGame: {
     zIndex: 5,
@@ -54,9 +60,21 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   box: {
-    height: '46vw',
+    height: '49vw',
     maxHeight: '595px',
     position: 'relative',
+  },
+  middleBox: {
+    height: '35vw',
+    maxHeight: '430px',
+    position: 'relative',
+    margin: '80px 0',
+  },
+  bigBox: {
+    height: '46vw',
+    maxHeight: '630px',
+    position: 'relative',
+    paddingLeft: '8px',
   },
 }));
 
@@ -75,6 +93,9 @@ const GridGame: React.FC = () => {
   const [isPlay, setIsPlay] = useState<boolean>(false);
   const [isAutoplay, setIsAutoplay] = useState<boolean>(false);
   const [isAnimation, setIsAnimation] = useState<boolean>(false);
+  const [toggleNewGame, setToggleNewGame] = useState<boolean>(false);
+  const [level, setLevel] = useState<number>(() => levelObj.get());
+  const [isNewGame, setIsNewGame] = useState<boolean>(false);
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
   const inputElMusic = useRef(null);
@@ -199,6 +220,7 @@ const GridGame: React.FC = () => {
     setTimeout(() => {
       playAudio(sound.current);
       setCards(getNewCards());
+      setToggleNewGame(!toggleNewGame);
       setToggle(!toggle);
       if (typeof cb === 'function') cb();
     }, 1100);
@@ -220,6 +242,7 @@ const GridGame: React.FC = () => {
     if (countCorrectCard === cards.length) {
       clearSetInterval();
       setIsEndGame(true);
+      setIsNewGame(false);
       if (count.current !== 0) {
         statisticsObj.save(score.current, countSeconds, errors);
         gameObj.saveIsEndGame();
@@ -240,7 +263,10 @@ const GridGame: React.FC = () => {
 
   const closeOpenCards = (): void => {
     playAudio(sound.current);
-    if (isPlay) startTime();
+    if (isPlay) {
+      startTime();
+      setIsNewGame(true);
+    }
     setCards(cards.map((cardObj) => {
       cardObj.isOpen = false;
       return cardObj;
@@ -285,6 +311,20 @@ const GridGame: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!idIntervals.current.length && !isStatistics && !isSettings && !isEndGame && isPlay && isNewGame) {
+      startTime();
+    }
+  }, [isSettings, isStatistics, isEndGame, isNewGame]);
+
+  useEffect(() => {
+    if (!isAutoplay && (isStatistics || isSettings)) clearSetInterval();
+  }, [isAutoplay, isSettings, isStatistics]);
+
+  useEffect(() => {
+    setLevel(levelObj.get());
+  }, [toggleNewGame]);
+
+  useEffect(() => {
     if (isPlay) {
       if (!gameObj.isSave() && !isEndGame) {
         openCards();
@@ -295,12 +335,18 @@ const GridGame: React.FC = () => {
           }, 1000);
         }, 4000);
       } else if (gameObj.isSave()) {
-        if (!isEndGame && isPlay && !isStatistics && !isSettings) startTime();
+        if (!isEndGame && isPlay && !isStatistics && !isSettings) {
+          setIsNewGame(true);
+          startTime();
+        }
       }
     } else if (gameObj.isSave()) {
-      if (!isEndGame && isPlay && !isStatistics && !isSettings) startTime();
+      if (!isEndGame && isPlay && !isStatistics && !isSettings) {
+        setIsNewGame(true);
+        startTime();
+      }
     }
-  }, [toggle, isPlay, isStatistics, isSettings]);
+  }, [toggle, isPlay]);
 
   return (
     <>
@@ -322,36 +368,71 @@ const GridGame: React.FC = () => {
             countSeconds={countSeconds}
             getNewGame={getNewGame}
           />
-          <Grid container spacing={1} className={classes.box}>
-            {isEndGame && (
-            <LayerEndGame
-              countSeconds={countSeconds}
-              errors={errors}
-            />
-            )}
-            {isAutoplay && (<div className={classes.noGame} />)}
-            {cards.map((card) => (
-              <Card
-                cardClick={cardClick}
-                value={card.value}
-                isOpen={card.isOpen}
-                id={card.id}
-                key={card.id}
-              />
-            ))}
-          </Grid>
+          {
+            (level === 0) ? (
+              <Grid container spacing={1} className={classes.box}>
+                {isEndGame && (
+                <LayerEndGame
+                  countSeconds={countSeconds}
+                  errors={errors}
+                />
+                )}
+                {isAutoplay && (<div className={classes.noGame} />)}
+                {cards.map((card) => (
+                  <Card
+                    toggleNewGame={toggleNewGame}
+                    cardClick={cardClick}
+                    value={card.value}
+                    isOpen={card.isOpen}
+                    id={card.id}
+                    key={card.id}
+                  />
+                ))}
+              </Grid>
+            ) : (
+              <div className={classes.containerNotLight}>
+                {isEndGame && (
+                  <LayerEndGame
+                    countSeconds={countSeconds}
+                    errors={errors}
+                  />
+                )}
+                {isAutoplay && (<div className={classes.noGame} />)}
+                <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
+                  {cards.slice(0, cards.length / 2).map((card) => (
+                    <Card
+                      toggleNewGame={toggleNewGame}
+                      cardClick={cardClick}
+                      value={card.value}
+                      isOpen={card.isOpen}
+                      id={card.id}
+                      key={card.id}
+                    />
+                  ))}
+                </Grid>
+                <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
+                  {cards.slice(cards.length / 2).map((card) => (
+                    <Card
+                      toggleNewGame={toggleNewGame}
+                      cardClick={cardClick}
+                      value={card.value}
+                      isOpen={card.isOpen}
+                      id={card.id}
+                      key={card.id}
+                    />
+                  ))}
+                </Grid>
+              </div>
+            )
+          }
           <div className={classes.container}>
             <div className={classes.containerIcons}>
               <StatisticsIcon
-                isAutoplay={isAutoplay}
                 setStatistics={setStatistics}
                 setIsStatistics={setIsStatistics}
-                clearSetInterval={clearSetInterval}
               />
               <SettingsIcon
-                isAutoplay={isAutoplay}
                 setIsSettings={setIsSettings}
-                clearSetInterval={clearSetInterval}
               />
             </div>
             <div>

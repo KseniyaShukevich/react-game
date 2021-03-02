@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import levelObj from './levelObj';
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -45,6 +46,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 interface IProps {
+  toggleNewGame: boolean
   id: number
   value: number
   isOpen: boolean
@@ -52,15 +54,26 @@ interface IProps {
 }
 
 const Card: React.FC<IProps> = ({
+  toggleNewGame,
   id,
   value,
   isOpen,
   cardClick,
 }: IProps) => {
   const classes = useStyles();
+  const [size, setSize] = useState<any>(2);
+
+  useEffect(() => {
+    const level = levelObj.get();
+    if (level) {
+      setSize(3);
+    } else {
+      setSize(2);
+    }
+  }, [toggleNewGame]);
 
   return (
-    <Grid item xs={2}>
+    <Grid item xs={size}>
       <div className={classes.card}>
         <div className={!isOpen ? classes.frontInBack : classes.front}>
           <img className={classes.image} src={`./${value}.jpg`} alt="card" />

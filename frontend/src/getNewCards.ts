@@ -1,13 +1,18 @@
 import ICard from './ICard';
 import idLocalStorage from './idLocalStorage';
 import getRandomNumber from './getRandomNumber';
+import levelObj from './levelObj';
+
+const levels: Array<number> = [6, 8, 12];
+let pairsCards: number;
 
 const getCardsNumbers = (): Array<number> => {
+  const level = levelObj.get();
+  pairsCards = levels[level];
   const maxCountCards: number = 52;
-  const countCards: number = 6;
   const buff: Array<number> = [];
 
-  for (let i = 0; i < countCards; i += 1) {
+  for (let i = 0; i < pairsCards; i += 1) {
     const indexCard: number = getRandomNumber(maxCountCards);
     if (!buff.includes(indexCard)) {
       buff.push(indexCard);
@@ -20,7 +25,7 @@ const getCardsNumbers = (): Array<number> => {
 };
 
 const getMixCards = (cards: Array<number>): Array<number> => {
-  const countCards: number = 6 * 2;
+  const countCards: number = pairsCards * 2;
   const buff: Array<number> = [];
   const mixCards: Array<number> = [];
 

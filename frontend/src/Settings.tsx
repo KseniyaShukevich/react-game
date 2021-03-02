@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -8,6 +8,7 @@ import {
   MusicNote, MusicOff, VolumeUp, VolumeOff,
 } from '@material-ui/icons';
 import audioObj from './audioObj';
+import levelObj from './levelObj';
 
 const useStyles = makeStyles((theme) => ({
   containerSettings: {
@@ -17,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     paddingBottom: theme.spacing(1),
+  },
+  select: {
+    width: 135,
   },
   subtitle: {
     paddingRight: theme.spacing(2.2),
@@ -65,6 +69,10 @@ const Statistics: React.FC<IProps> = ({
   const classes = useStyles();
   const [volumeMusic, setVolumeMusic] = useState<number>(audioObj.get('Music') * maxVolume);
   const [volumeSound, setVolumeSound] = useState<number>(audioObj.get('Sound') * maxVolume);
+  const optionLevel0 = useRef(null);
+  const optionLevel1 = useRef(null);
+  const optionLevel2 = useRef(null);
+  const options: Array<any> = [optionLevel0, optionLevel1, optionLevel2];
 
   const saveAudio = (isAudio: boolean, volume: number, name: string): void => {
     if (isAudio) {
@@ -119,6 +127,19 @@ const Statistics: React.FC<IProps> = ({
     }
   };
 
+  const changeLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    levelObj.save(e.target.value);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isSettings && options[0].current) {
+        const optionIndex = levelObj.get();
+        options[optionIndex].current.selected = true;
+      }
+    }, 100);
+  }, [isSettings]);
+
   useEffect(() => {
     const vMusic: boolean = audioObj.isNoVolume('Music');
     const vSound: boolean = audioObj.isNoVolume('Sound');
@@ -168,6 +189,14 @@ const Statistics: React.FC<IProps> = ({
             type="range"
             onChange={() => changeVolume(sound, inputElSound.current.value, setVolumeSound, isSound, setIsSound)}
           />
+        </div>
+        <div className={classes.container}>
+        <Typography variant="subtitle1" className={classes.subtitle}>Level</Typography>
+          <select className={classes.select} onChange={changeLevel}>
+            <option ref={optionLevel0} value={0}>light</option>
+            <option ref={optionLevel1} value={1}>normal</option>
+            <option ref={optionLevel2} value={2}>hard</option>
+          </select>
         </div>
       </div>
     </Dialog>

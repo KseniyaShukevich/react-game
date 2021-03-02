@@ -13,24 +13,17 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface IProps {
-  isAutoplay: boolean
   setStatistics: (value: Array<IStatistics> | null) => void
   setIsStatistics: (value: boolean) => void
-  clearSetInterval: () => void
 }
 
 const StatisticsIcon: React.FC<IProps> = ({
-  isAutoplay,
   setStatistics,
   setIsStatistics,
-  clearSetInterval,
 }: IProps) => {
   const classes = useStyles();
 
   const handleClick = (): void => {
-    if (!isAutoplay) {
-      clearSetInterval();
-    }
     setIsStatistics(true);
     setStatistics(statisticsObj.get());
   };
