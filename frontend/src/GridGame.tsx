@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useRef,
+  useState, useEffect, useRef, useCallback,
 } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -145,16 +145,16 @@ const GridGame: React.FC = () => {
   };
 
   const isEvenCardCount = (): boolean => {
-    let count: number = 0;
+    let countCard: number = 0;
 
     cards.map((cardObj) => {
       if (cardObj.isOpen) {
-        count += 1;
+        countCard += 1;
       }
       return cardObj;
     });
 
-    if (count % 2 === 0) {
+    if (countCard % 2 === 0) {
       return true;
     }
     return false;
@@ -244,7 +244,7 @@ const GridGame: React.FC = () => {
       setIsEndGame(true);
       setIsNewGame(false);
       if (count.current !== 0) {
-        statisticsObj.save(score.current, countSeconds, errors);
+        statisticsObj.save(score.current, countSeconds, errors, level);
         gameObj.saveIsEndGame();
       }
     }
@@ -429,6 +429,7 @@ const GridGame: React.FC = () => {
           <div className={classes.container}>
             <div className={classes.containerIcons}>
               <StatisticsIcon
+                level={level}
                 setStatistics={setStatistics}
                 setIsStatistics={setIsStatistics}
               />
@@ -451,6 +452,8 @@ const GridGame: React.FC = () => {
             </div>
           </div>
           <Statistics
+            level={level}
+            setStatistics={setStatistics}
             statistics={statistics}
             isStatistics={isStatistics}
             setIsStatistics={setIsStatistics}

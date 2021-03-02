@@ -13,11 +13,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface IProps {
+  level: number
   setStatistics: (value: Array<IStatistics> | null) => void
   setIsStatistics: (value: boolean) => void
 }
 
 const StatisticsIcon: React.FC<IProps> = ({
+  level,
   setStatistics,
   setIsStatistics,
 }: IProps) => {
@@ -25,7 +27,7 @@ const StatisticsIcon: React.FC<IProps> = ({
 
   const handleClick = (): void => {
     setIsStatistics(true);
-    setStatistics(statisticsObj.get());
+    setStatistics(statisticsObj.get(level));
   };
 
   return (
