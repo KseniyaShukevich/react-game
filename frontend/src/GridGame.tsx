@@ -327,12 +327,13 @@ const GridGame: React.FC = () => {
   useEffect(() => {
     if (isPlay) {
       if (!gameObj.isSave() && !isEndGame) {
+        setIsAnimation(true);
         openCards();
         setTimeout(() => {
           closeOpenCards();
           setTimeout(() => {
             setIsAnimation(false);
-          }, 1000);
+          }, 1200);
         }, 4000);
       } else if (gameObj.isSave()) {
         if (!isEndGame && isPlay && !isStatistics && !isSettings) {
