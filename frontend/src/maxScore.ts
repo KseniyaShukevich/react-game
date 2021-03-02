@@ -1,3 +1,3 @@
-const maxScore: number = 100;
+const maxScore: number = 300;
 
 export default maxScore;
