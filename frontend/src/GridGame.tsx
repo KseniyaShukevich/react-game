@@ -26,6 +26,17 @@ import Autoplay from './Autoplay';
 import levelObj from './levelObj';
 
 const useStyles = makeStyles((theme) => ({
+  hiddenGame: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+    paddingBottom: theme.spacing(1.5),
+  },
+  noHiddenGame: {
+    width: '100%',
+    position: 'relative',
+    paddingBottom: theme.spacing(1.5),
+  },
   containerGame: {
     minHeight: '91vh',
     display: 'flex',
@@ -45,6 +56,16 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     width: '100%',
     height: '100%',
+  },
+  loader: {
+    zIndex: 5,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    background: 'white',
   },
   container: {
     width: '100%',
@@ -71,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '80px 0',
   },
   bigBox: {
-    height: '46vw',
+    height: '49vw',
     maxHeight: '630px',
     position: 'relative',
     paddingLeft: '8px',
@@ -94,6 +115,7 @@ const GridGame: React.FC = () => {
   const [isAutoplay, setIsAutoplay] = useState<boolean>(false);
   const [isAnimation, setIsAnimation] = useState<boolean>(false);
   const [toggleNewGame, setToggleNewGame] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [level, setLevel] = useState<number>(() => levelObj.get());
   const [isNewGame, setIsNewGame] = useState<boolean>(false);
   const idIntervals = useRef<Array<any>>([]);
@@ -321,6 +343,10 @@ const GridGame: React.FC = () => {
   }, [isAutoplay, isSettings, isStatistics]);
 
   useEffect(() => {
+    if (isPlay) setIsLoading(true);
+  }, [level]);
+
+  useEffect(() => {
     setLevel(levelObj.get());
   }, [toggleNewGame]);
 
@@ -329,6 +355,7 @@ const GridGame: React.FC = () => {
       if (!gameObj.isSave() && !isEndGame) {
         setIsAnimation(true);
         openCards();
+        setTimeout(() => setIsLoading(false), 500);
         setTimeout(() => {
           closeOpenCards();
           setTimeout(() => {
@@ -369,7 +396,13 @@ const GridGame: React.FC = () => {
             countSeconds={countSeconds}
             getNewGame={getNewGame}
           />
-          {
+          <div className={isLoading ? classes.hiddenGame : classes.noHiddenGame}>
+            {isLoading && (
+            <div className={classes.loader}>
+              <img src="./Snake.gif" alt="loading" />
+            </div>
+            )}
+            {
             (level === 0) ? (
               <Grid container spacing={1} className={classes.box}>
                 {isEndGame && (
@@ -426,6 +459,7 @@ const GridGame: React.FC = () => {
               </div>
             )
           }
+          </div>
           <div className={classes.container}>
             <div className={classes.containerIcons}>
               <StatisticsIcon
