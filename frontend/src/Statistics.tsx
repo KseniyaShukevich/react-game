@@ -32,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     textAlign: 'center',
     color: 'grey',
-    minWidth: 330,
+    minWidth: 300,
   },
   table: {
-    minWidth: 330,
+    minWidth: 300,
   },
 }));
 
