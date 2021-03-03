@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className={classes.footer}>
-      <Container maxWidth="lg">
+      <Container maxWidth="md">
         <Box className={classes.container}>
           <Box>
             <a className={classes.author} href="https://github.com/KseniyaShukevich">

@@ -27,15 +27,19 @@ import levelObj from './levelObj';
 
 const useStyles = makeStyles((theme) => ({
   hiddenGame: {
+    display: 'flex',
+    alignItems: 'center',
+    height: '500px',
     width: '100%',
     position: 'relative',
     overflow: 'hidden',
-    paddingBottom: theme.spacing(1.5),
   },
   noHiddenGame: {
+    display: 'flex',
+    alignItems: 'center',
+    height: '500px',
     width: '100%',
     position: 'relative',
-    paddingBottom: theme.spacing(1.5),
   },
   containerGame: {
     minHeight: '91vh',
@@ -81,19 +85,19 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   box: {
-    height: '49vw',
-    maxHeight: '595px',
+    height: '45vw',
+    maxHeight: '440px',
     position: 'relative',
   },
   middleBox: {
-    height: '35vw',
-    maxHeight: '430px',
+    height: '33vw',
+    maxHeight: '320px',
     position: 'relative',
     margin: '80px 0',
   },
   bigBox: {
     height: '49vw',
-    maxHeight: '630px',
+    maxHeight: '480px',
     position: 'relative',
     paddingLeft: '8px',
   },
@@ -363,7 +367,7 @@ const GridGame: React.FC = () => {
       if (!gameObj.isSave() && !isEndGame) {
         setIsAnimation(true);
         openCards();
-        setTimeout(() => setIsLoading(false), 500);
+        setTimeout(() => setIsLoading(false), 100);
         setTimeout(() => {
           closeOpenCards();
           setTimeout(() => {
@@ -395,7 +399,7 @@ const GridGame: React.FC = () => {
       <main>
         <Music music={music} />
         <Sound sound={sound} />
-        <Container maxWidth="lg" className={classes.containerGame}>
+        <Container maxWidth="md" className={classes.containerGame}>
           <Menu
             count={count}
             isAnimation={isAnimation}
