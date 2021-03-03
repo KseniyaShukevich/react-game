@@ -69,7 +69,7 @@ const HotKeys: React.FC<IProps> = ({ isHotKeys, setIsHotKeys }: IProps) => {
         </div>
         <div className={classes.containerItem}>
           <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>CTRL</Typography>
-          <Typography className={classes.text} variant="subtitle1">- choose a card</Typography>
+          <Typography className={classes.text} variant="subtitle1">- choose the card</Typography>
         </div>
       </div>
     </Dialog>
