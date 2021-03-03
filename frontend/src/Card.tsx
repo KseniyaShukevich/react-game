@@ -5,7 +5,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import levelObj from './levelObj';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   card: {
     position: 'relative',
     perspective: '1000px',
@@ -13,7 +13,15 @@ const useStyles = makeStyles(() => ({
   },
   image: {
     width: '100%',
-    borderRadius: '10px',
+    [theme.breakpoints.up('xs')]: {
+      borderRadius: '3px',
+    },
+    [theme.breakpoints.up('sm')]: {
+      borderRadius: '5px',
+    },
+    [theme.breakpoints.up('lg')]: {
+      borderRadius: '10px',
+    },
     boxShadow: '0px 0px 5px rgba(0,0,0,0.5)',
     transition: '0.3s',
     '&:hover': {
