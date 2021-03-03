@@ -398,7 +398,9 @@ const GridGame: React.FC = () => {
 
   const doClick = (): void => {
     const card: ICard = cards.find((item) => item.id === focusCard.current);
-    cardClick(card.isOpen, card.id, card.value);
+    if (card) {
+      cardClick(card.isOpen, card.id, card.value);
+    }
   };
 
   useEffect(() => {
