@@ -349,7 +349,7 @@ const GridGame: React.FC = () => {
     const { key } = e;
 
     if (!isKeydownGame
-      && ((key === 'ArrowRight') || (key === 'ArrowDown') || (key === 'ArrowLeft') || (key === 'ArrowUp') || (key === 'Enter'))) {
+      && ((key === 'ArrowRight') || (key === 'ArrowDown') || (key === 'ArrowLeft') || (key === 'ArrowUp') || (key === 'Control'))) {
       keypress.current = key;
       setIsKeydownGame(true);
       setToggleKey((prev) => !prev);
@@ -402,7 +402,7 @@ const GridGame: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isKeydownGame && !isSettings && !isStatistics && !isHotKeys && !isEndGame) {
+    if (isKeydownGame && !isSettings && !isStatistics && !isHotKeys && !isEndGame && !isAutoplay) {
       if (keypress.current === 'ArrowRight') {
         doArrowRight();
       } else if (keypress.current === 'ArrowLeft') {
@@ -411,7 +411,7 @@ const GridGame: React.FC = () => {
         doArrowUp();
       } else if (keypress.current === 'ArrowDown') {
         doArrowDown();
-      } else if (keypress.current === 'Enter') {
+      } else if (keypress.current === 'Control') {
         doClick();
       }
     }
@@ -450,7 +450,7 @@ const GridGame: React.FC = () => {
 
   useEffect(() => {
     if (isPlay) {
-      if (!gameObj.isSave() && !isEndGame) {
+      if (!gameObj.isSave() && !isEndGame && keypress.current !== 'Enter') {
         setIsAnimation(true);
         openCards();
         setTimeout(() => setIsLoading(false), 100);
