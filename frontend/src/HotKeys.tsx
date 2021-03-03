@@ -9,7 +9,6 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   KeyboardArrowUp,
-  KeyboardReturn,
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,8 +68,8 @@ const HotKeys: React.FC<IProps> = ({ isHotKeys, setIsHotKeys }: IProps) => {
           <Typography className={classes.text} variant="subtitle1">- up</Typography>
         </div>
         <div className={classes.containerItem}>
-          <KeyboardReturn className={classes.icon} />
-          <Typography className={classes.text} variant="subtitle1">(Enter) - choose a card</Typography>
+          <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>CTRL</Typography>
+          <Typography className={classes.text} variant="subtitle1">- choose a card</Typography>
         </div>
       </div>
     </Dialog>
