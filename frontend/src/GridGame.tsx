@@ -125,6 +125,7 @@ const GridGame: React.FC = () => {
   const music = useRef(null);
   const sound = useRef(null);
   const count = useRef<number>(1);
+  const currLevel = useRef<number>(level);
 
   const addError = (): void => {
     setErrors((prev) => {
@@ -305,6 +306,7 @@ const GridGame: React.FC = () => {
   };
 
   const openCards = (): void => {
+    playAudio(sound.current);
     setCards(cards.map((cardObj) => {
       cardObj.isOpen = true;
       return cardObj;
@@ -347,8 +349,14 @@ const GridGame: React.FC = () => {
   }, [level]);
 
   useEffect(() => {
-    setLevel(levelObj.get());
-  }, [toggleNewGame]);
+    const newLevel = levelObj.get();
+
+    if (!isSettings && currLevel.current !== newLevel) {
+      currLevel.current = newLevel;
+      setLevel(newLevel);
+      getNewGame();
+    }
+  }, [isSettings]);
 
   useEffect(() => {
     if (isPlay) {
