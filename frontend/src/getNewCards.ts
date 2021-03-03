@@ -7,7 +7,7 @@ const levels: Array<number> = [6, 8, 12];
 let pairsCards: number;
 
 const getCardsNumbers = (): Array<number> => {
-  const level = levelObj.get();
+  const level: number = levelObj.get();
   pairsCards = levels[level];
   const maxCountCards: number = 52;
   const buff: Array<number> = [];
@@ -43,6 +43,8 @@ const getMixCards = (cards: Array<number>): Array<number> => {
 };
 
 const getCardsObjects = (cards: Array<number>): Array<ICard> => {
+  const level: number = levelObj.get();
+
   const cardsObjects: Array<ICard> = cards.map((card: number, index: number) => {
     const cardObject: ICard = {
       id: index,
@@ -53,6 +55,19 @@ const getCardsObjects = (cards: Array<number>): Array<ICard> => {
     return cardObject;
   });
 
+  if (level === 1) {
+    return [
+      ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
+      ...cardsObjects.slice(4, 8), ...cardsObjects.slice(12),
+    ];
+  }
+  if (level === 2) {
+    return [
+      ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
+      ...cardsObjects.slice(16, 20), ...cardsObjects.slice(4, 8),
+      ...cardsObjects.slice(12, 16), ...cardsObjects.slice(20),
+    ];
+  }
   return cardsObjects;
 };
 

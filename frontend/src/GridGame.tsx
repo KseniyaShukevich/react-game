@@ -12,8 +12,10 @@ import IStatistics from './IStatistics';
 import gameObj from './gameObj';
 import StatisticsIcon from './StatisticsIcon';
 import SettingsIcon from './SettingsIcon';
+import HotKeysIcon from './HotkeysIcon';
 import Statistics from './Statistics';
 import Settings from './Settings';
+import HotKeys from './HotKeys';
 import Music from './Music';
 import Sound from './Sound';
 import maxScore from './maxScore';
@@ -78,8 +80,8 @@ const useStyles = makeStyles((theme) => ({
     padding: `${theme.spacing(1)}px 0`,
   },
   containerIcons: {
-    width: '10%',
-    minWidth: 100,
+    width: '20%',
+    minWidth: 120,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -110,6 +112,7 @@ const GridGame: React.FC = () => {
   const [countSeconds, setCountSeconds] = useState<number>(() => timeObj.getSavedSeconds());
   const [isStatistics, setIsStatistics] = useState<boolean>(false);
   const [isSettings, setIsSettings] = useState<boolean>(false);
+  const [isHotKeys, setIsHotKeys] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<Array<IStatistics> | null>(null);
   const [errors, setErrors] = useState<number>(() => errorsObj.getSaved());
   const [isEndGame, setIsEndGame] = useState<boolean>(() => gameObj.getIsEndGame());
@@ -122,6 +125,8 @@ const GridGame: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [level, setLevel] = useState<number>(() => levelObj.get());
   const [isNewGame, setIsNewGame] = useState<boolean>(false);
+  const [isKeydownGame, setIsKeydownGame] = useState<boolean>(false);
+  const [toggleKey, setToggleKey] = useState<boolean>(false);
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
   const inputElMusic = useRef(null);
@@ -130,6 +135,8 @@ const GridGame: React.FC = () => {
   const sound = useRef(null);
   const count = useRef<number>(1);
   const currLevel = useRef<number>(level);
+  const focusCard = useRef<number>(-1);
+  const keypress = useRef(null);
 
   const addError = (): void => {
     setErrors((prev) => {
@@ -250,7 +257,7 @@ const GridGame: React.FC = () => {
       setToggleNewGame(!toggleNewGame);
       setToggle(!toggle);
       if (typeof cb === 'function') cb();
-    }, 1100);
+    }, 1050);
   };
 
   const getCountCorrectCard = (): number => {
@@ -338,15 +345,94 @@ const GridGame: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (!idIntervals.current.length && !isStatistics && !isSettings && !isEndGame && isPlay && isNewGame) {
-      startTime();
+  const checkKeydown = (e: KeyboardEvent): void => {
+    const { key } = e;
+
+    if (!isKeydownGame
+      && ((key === 'ArrowRight') || (key === 'ArrowDown') || (key === 'ArrowLeft') || (key === 'ArrowUp') || (key === 'Enter'))) {
+      keypress.current = key;
+      setIsKeydownGame(true);
+      setToggleKey((prev) => !prev);
     }
-  }, [isSettings, isStatistics, isEndGame, isNewGame]);
+  };
+
+  const doArrowRight = (): void => {
+    focusCard.current = (focusCard.current + 1) % cards.length;
+  };
+
+  const doArrowLeft = (): void => {
+    if (focusCard.current === -1) {
+      focusCard.current = 0;
+    } else {
+      const newId: number = focusCard.current - 1;
+      if (newId < 0) {
+        focusCard.current = cards.length - 1;
+      } else {
+        focusCard.current = newId;
+      }
+    }
+  };
+
+  const doArrowUp = (): void => {
+    if (focusCard.current === -1) {
+      focusCard.current = 0;
+    } else {
+      const steps: Array<number> = [6, 8, 8];
+      const newId: number = focusCard.current - steps[level];
+      if (newId < 0) {
+        focusCard.current = cards.length + focusCard.current - steps[level];
+      } else {
+        focusCard.current -= steps[level];
+      }
+    }
+  };
+
+  const doArrowDown = (): void => {
+    if (focusCard.current === -1) {
+      focusCard.current = 0;
+    } else {
+      const steps: Array<number> = [6, 8, 8];
+      focusCard.current = (focusCard.current + steps[level]) % cards.length;
+    }
+  };
+
+  const doClick = (): void => {
+    const card: ICard = cards.find((item) => item.id === focusCard.current);
+    cardClick(card.isOpen, card.id, card.value);
+  };
 
   useEffect(() => {
-    if (!isAutoplay && (isStatistics || isSettings)) clearSetInterval();
-  }, [isAutoplay, isSettings, isStatistics]);
+    if (isKeydownGame && !isSettings && !isStatistics && !isHotKeys && !isEndGame) {
+      if (keypress.current === 'ArrowRight') {
+        doArrowRight();
+      } else if (keypress.current === 'ArrowLeft') {
+        doArrowLeft();
+      } else if (keypress.current === 'ArrowUp') {
+        doArrowUp();
+      } else if (keypress.current === 'ArrowDown') {
+        doArrowDown();
+      } else if (keypress.current === 'Enter') {
+        doClick();
+      }
+    }
+  }, [toggleKey]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', checkKeydown);
+  }, []);
+
+  useEffect(() => {
+    if (!idIntervals.current.length
+      && !isStatistics && !isSettings
+      && !isHotKeys && !isEndGame
+      && isPlay && isNewGame) {
+      startTime();
+    }
+  }, [isSettings, isStatistics, isHotKeys, isEndGame, isNewGame]);
+
+  useEffect(() => {
+    if (!isAutoplay && (isStatistics || isSettings || isHotKeys)) clearSetInterval();
+  }, [isAutoplay, isSettings, isStatistics, isHotKeys]);
 
   useEffect(() => {
     if (isPlay) setIsLoading(true);
@@ -375,13 +461,13 @@ const GridGame: React.FC = () => {
           }, 1200);
         }, 4000);
       } else if (gameObj.isSave()) {
-        if (!isEndGame && isPlay && !isStatistics && !isSettings) {
+        if (!isEndGame && isPlay && !isStatistics && !isSettings && !isHotKeys) {
           setIsNewGame(true);
           startTime();
         }
       }
     } else if (gameObj.isSave()) {
-      if (!isEndGame && isPlay && !isStatistics && !isSettings) {
+      if (!isEndGame && isPlay && !isStatistics && !isSettings && !isHotKeys) {
         setIsNewGame(true);
         startTime();
       }
@@ -426,6 +512,9 @@ const GridGame: React.FC = () => {
                 {isAutoplay && (<div className={classes.noGame} />)}
                 {cards.map((card) => (
                   <Card
+                    focusCard={focusCard}
+                    isKeydownGame={isKeydownGame}
+                    setIsKeydownGame={setIsKeydownGame}
                     toggleNewGame={toggleNewGame}
                     cardClick={cardClick}
                     value={card.value}
@@ -447,6 +536,9 @@ const GridGame: React.FC = () => {
                 <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
                   {cards.slice(0, cards.length / 2).map((card) => (
                     <Card
+                      focusCard={focusCard}
+                      isKeydownGame={isKeydownGame}
+                      setIsKeydownGame={setIsKeydownGame}
                       toggleNewGame={toggleNewGame}
                       cardClick={cardClick}
                       value={card.value}
@@ -459,6 +551,9 @@ const GridGame: React.FC = () => {
                 <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
                   {cards.slice(cards.length / 2).map((card) => (
                     <Card
+                      focusCard={focusCard}
+                      isKeydownGame={isKeydownGame}
+                      setIsKeydownGame={setIsKeydownGame}
                       toggleNewGame={toggleNewGame}
                       cardClick={cardClick}
                       value={card.value}
@@ -481,6 +576,9 @@ const GridGame: React.FC = () => {
               />
               <SettingsIcon
                 setIsSettings={setIsSettings}
+              />
+              <HotKeysIcon
+                setIsHotKeys={setIsHotKeys}
               />
             </div>
             <div>
@@ -515,6 +613,10 @@ const GridGame: React.FC = () => {
             inputElSound={inputElSound}
             music={music}
             sound={sound}
+          />
+          <HotKeys
+            isHotKeys={isHotKeys}
+            setIsHotKeys={setIsHotKeys}
           />
         </Container>
       </main>
