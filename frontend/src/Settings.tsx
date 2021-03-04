@@ -10,6 +10,7 @@ import {
 import audioObj from './audioObj';
 import levelObj from './levelObj';
 import fieldObj from './fieldObj';
+import themeObj from './themeObj';
 
 const useStyles = makeStyles((theme) => ({
   containerSettings: {
@@ -22,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
   },
   select: {
     width: 135,
+    background: theme.palette.background.default,
+    color: theme.palette.text.primary,
+  },
+  input: {
+    background: theme.palette.background.default,
   },
   subtitle: {
     paddingRight: theme.spacing(2.2),
@@ -49,8 +55,10 @@ interface IProps {
   inputElSound: any
   isSettings: boolean
   setIsSettings: (value: boolean) => void
-  setIsMusic: (value: boolean) => void
-  setIsSound: (value: boolean) => void
+  setIsMusic: (value: any) => void
+  setIsSound: (value: any) => void
+  setTheme: (value: any) => void
+  setThemeNumber: (value: number) => void
 }
 
 const Statistics: React.FC<IProps> = ({
@@ -64,6 +72,8 @@ const Statistics: React.FC<IProps> = ({
   setIsSettings,
   setIsMusic,
   setIsSound,
+  setTheme,
+  setThemeNumber,
 }: IProps) => {
   const minVolume: number = 0;
   const maxVolume: number = 100;
@@ -77,6 +87,9 @@ const Statistics: React.FC<IProps> = ({
   const optionPC = useRef(null);
   const optionMobile = useRef(null);
   const optionsField: Array<any> = [optionPC, optionMobile];
+  const optionLightTheme = useRef(null);
+  const optionDarkTheme = useRef(null);
+  const optionsThemes: Array<any> = [optionLightTheme, optionDarkTheme];
 
   const saveAudio = (isAudio: boolean, volume: number, name: string): void => {
     if (isAudio) {
@@ -97,7 +110,7 @@ const Statistics: React.FC<IProps> = ({
       setVolumeFunc(audioObj.get(`${name}`) * maxVolume);
       refEl.current.volume = audioObj.get(`${name}`);
     }
-    setIsFunc(!isAudio);
+    setIsFunc((prev: any) => !prev);
   };
 
   const changeVolume = (
@@ -105,9 +118,17 @@ const Statistics: React.FC<IProps> = ({
   ): void => {
     refEl.current.volume = inputValue / maxVolume;
     setVolumeFunc(inputValue);
-    if (!isAudio && inputValue) setIsFunc(true);
-    if (!inputValue) setIsFunc(false);
   };
+
+  useEffect(() => {
+    if (isSound && (+volumeSound === 0)) setIsSound(false);
+    if (!isSound && (+volumeSound > 0)) setIsSound(true);
+  }, [volumeSound]);
+
+  useEffect(() => {
+    if (isMusic && (+volumeMusic === 0)) setIsMusic(false);
+    if (!isMusic && (+volumeMusic > 0)) setIsMusic(true);
+  }, [volumeMusic]);
 
   const onClose = (): void => {
     setIsSettings(false);
@@ -139,6 +160,12 @@ const Statistics: React.FC<IProps> = ({
     fieldObj.save(e.target.value);
   };
 
+  const chooseTheme = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    themeObj.save(e.target.value);
+    setTheme(themeObj.getTheme());
+    setThemeNumber(themeObj.get());
+  };
+
   useEffect(() => {
     setTimeout(() => {
       if (isSettings && options[0].current) {
@@ -146,6 +173,8 @@ const Statistics: React.FC<IProps> = ({
         options[optionIndexLevel].current.selected = true;
         const optionIndexField: number = fieldObj.get();
         optionsField[optionIndexField].current.selected = true;
+        const optionTheme: number = themeObj.get();
+        optionsThemes[optionTheme].current.selected = true;
       }
     }, 100);
   }, [isSettings]);
@@ -213,6 +242,13 @@ const Statistics: React.FC<IProps> = ({
           <select className={classes.select} onChange={chooseField}>
             <option ref={optionPC} value={0}>PC</option>
             <option ref={optionMobile} value={1}>mobile</option>
+          </select>
+        </div>
+        <div className={classes.container}>
+        <Typography variant="subtitle1" className={classes.subtitle}>Theme</Typography>
+          <select className={classes.select} onChange={chooseTheme}>
+            <option ref={optionLightTheme} value={0}>Light</option>
+            <option ref={optionDarkTheme} value={1}>Dark</option>
           </select>
         </div>
       </div>

@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import IStatistics from './IStatistics';
 import statisticsObj from './statisticsObj';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   icon: {
+    color: theme.palette.text.primary,
     '&:hover': {
       cursor: 'pointer',
     },

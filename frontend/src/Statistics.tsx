@@ -27,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
   },
   select: {
     width: '100%',
+    background: theme.palette.background.default,
+    color: theme.palette.text.primary,
   },
   noStatistics: {
     paddingTop: theme.spacing(2),

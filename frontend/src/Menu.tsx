@@ -11,6 +11,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     paddingBottom: theme.spacing(2),
   },
+  text: {
+    color: theme.palette.text.primary,
+  },
 }));
 
 interface IProps {
@@ -39,7 +42,7 @@ const Menu: React.FC<IProps> = ({
   return (
     <div className={classes.menu}>
       <div>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle2" className={classes.text}>
           Time:
           {' '}
           {minutes}
@@ -48,7 +51,7 @@ const Menu: React.FC<IProps> = ({
         </Typography>
       </div>
       <div>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle2" className={classes.text}>
           Errors:
           {' '}
           {errors}
