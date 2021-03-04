@@ -2,8 +2,9 @@ import React from 'react';
 import { Settings } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   icon: {
+    color: theme.palette.text.primary,
     '&:hover': {
       cursor: 'pointer',
     },

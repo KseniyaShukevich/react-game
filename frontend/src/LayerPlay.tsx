@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import {
   Button,
 } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   overlayNone: {
     opacity: 0,
     zIndex: 30,
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     top: 0,
     left: 0,
-    background: 'rgba(255, 255, 255, 0.8)',
+    background: fade(theme.palette.background.default, 0.8),
     transition: 'opacity 0.5s',
   },
   overlay: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     top: 0,
     left: 0,
-    background: 'rgba(255, 255, 255, 0.8)',
+    background: fade(theme.palette.background.default, 0.8),
     transition: 'opacity 0.5s',
   },
 }));

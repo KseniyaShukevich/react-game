@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useRef, useCallback,
+  useState, useEffect, useRef,
 } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,8 +27,13 @@ import LayerPlay from './LayerPlay';
 import Autoplay from './Autoplay';
 import levelObj from './levelObj';
 import fieldObj from './fieldObj';
+import themeObj from './themeObj';
 
 const useStyles = makeStyles((theme) => ({
+  main: {
+    background: theme.palette.background.default,
+    minHeight: 'calc(100vh - 65px)',
+  },
   hiddenGame: {
     display: 'flex',
     alignItems: 'center',
@@ -64,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
   },
-  loader: {
+  loading: {
     zIndex: 5,
     display: 'flex',
     justifyContent: 'center',
@@ -72,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    background: 'white',
+    background: theme.palette.background.default,
   },
   container: {
     width: '100%',
@@ -98,7 +103,6 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   mobileContainer: {
-    // display: 'flex',
     width: '100%',
     position: 'relative',
   },
@@ -128,7 +132,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GridGame: React.FC = () => {
+interface IProps {
+  theme: any,
+  setTheme: (value: any) => void
+}
+
+const GridGame: React.FC<IProps> = ({ theme, setTheme }: IProps) => {
   const classes = useStyles();
   const [cards, setCards] = useState<Array<ICard>>(() => getNewCards());
   const [toggle, setToggle] = useState<boolean>(false);
@@ -151,6 +160,7 @@ const GridGame: React.FC = () => {
   const [isNewGame, setIsNewGame] = useState<boolean>(false);
   const [isKeydownGame, setIsKeydownGame] = useState<boolean>(false);
   const [toggleKey, setToggleKey] = useState<boolean>(false);
+  const [themeNumber, setThemeNumber] = useState<number>(themeObj.get());
   const idIntervals = useRef<Array<any>>([]);
   const score = useRef<number>(maxScore);
   const inputElMusic = useRef(null);
@@ -482,7 +492,6 @@ const GridGame: React.FC = () => {
       currField.current = newField;
       setLevel(newLevel);
       setField(newField);
-      console.log('NEW GAME');
       getNewGame();
     }
   }, [isSettings]);
@@ -521,7 +530,7 @@ const GridGame: React.FC = () => {
         setIsPlay={setIsPlay}
       />
       )}
-      <main>
+      <main className={classes.main}>
         <Music music={music} />
         <Sound sound={sound} />
         <Container maxWidth="md" className={classes.containerGame}>
@@ -535,7 +544,7 @@ const GridGame: React.FC = () => {
           />
           <div className={isLoading ? classes.hiddenGame : classes.noHiddenGame}>
             {isLoading && (
-            <div className={classes.loader}>
+            <div className={classes.loading}>
               <img src="./Snake.gif" alt="loading" />
             </div>
             )}
@@ -551,6 +560,7 @@ const GridGame: React.FC = () => {
                 {isAutoplay && (<div className={classes.noGame} />)}
                 {cards.map((card) => (
                   <Card
+                    themeNumber={themeNumber}
                     focusCard={focusCard}
                     isKeydownGame={isKeydownGame}
                     setIsKeydownGame={setIsKeydownGame}
@@ -564,7 +574,6 @@ const GridGame: React.FC = () => {
                 ))}
               </Grid>
             ) : (
-            // <div className={classes.containerNotLight}>
               <div className={field ? classes.mobileContainer : classes.containerNotLight}>
                 {isEndGame && (
                   <LayerEndGame
@@ -573,7 +582,6 @@ const GridGame: React.FC = () => {
                   />
                 )}
                 {isAutoplay && (<div className={classes.noGame} />)}
-                {/* <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}> */}
                 <Grid
                   container
                   spacing={1}
@@ -587,6 +595,7 @@ const GridGame: React.FC = () => {
                 >
                   {cards.slice(0, cards.length / 2).map((card) => (
                     <Card
+                      themeNumber={themeNumber}
                       focusCard={focusCard}
                       isKeydownGame={isKeydownGame}
                       setIsKeydownGame={setIsKeydownGame}
@@ -612,6 +621,7 @@ const GridGame: React.FC = () => {
                 >
                   {cards.slice(cards.length / 2).map((card) => (
                     <Card
+                      themeNumber={themeNumber}
                       focusCard={focusCard}
                       isKeydownGame={isKeydownGame}
                       setIsKeydownGame={setIsKeydownGame}
@@ -674,6 +684,8 @@ const GridGame: React.FC = () => {
             inputElSound={inputElSound}
             music={music}
             sound={sound}
+            setTheme={setTheme}
+            setThemeNumber={setThemeNumber}
           />
           <HotKeys
             isHotKeys={isHotKeys}

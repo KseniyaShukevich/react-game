@@ -2,8 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Keyboard } from '@material-ui/icons';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   icon: {
+    color: theme.palette.text.primary,
     '&:hover': {
       cursor: 'pointer',
     },

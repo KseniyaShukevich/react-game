@@ -58,14 +58,12 @@ const getCardsObjects = (cards: Array<number>): Array<ICard> => {
   });
 
   if (level === 1 && !field) {
-    console.log('HERE 1');
     return [
       ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
       ...cardsObjects.slice(4, 8), ...cardsObjects.slice(12),
     ];
   }
   if (level === 2 && !field) {
-    console.log('HERE 2');
     return [
       ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
       ...cardsObjects.slice(16, 20), ...cardsObjects.slice(4, 8),

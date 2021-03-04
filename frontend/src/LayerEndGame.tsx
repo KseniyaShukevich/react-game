@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {
   Typography,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import timeObj from './timeObj';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   overlayNone: {
     zIndex: 20,
     position: 'absolute',
@@ -27,8 +27,12 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     top: 0,
     left: 0,
-    background: 'rgba(255, 255, 255, 0.8)',
+    background: fade(theme.palette.background.default, 0.8),
     transition: 'opacity 0.5s',
+  },
+  text: {
+    color: theme.palette.text.primary,
+    textAlign: 'center',
   },
 }));
 interface IProps {
@@ -48,7 +52,7 @@ const LayerEndGame: React.FC<IProps> = ({ countSeconds, errors }: IProps) => {
 
   return (
     <div className={isMounted ? classes.overlay : classes.overlayNone}>
-      <Typography variant="h5" style={{ textAlign: 'center' }}>
+      <Typography variant="h5" className={classes.text}>
         Passed for
         {' '}
         {minutes}

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     perspective: '1000px',
     height: '100%',
   },
-  image: {
+  imageInteractive: {
     width: '100%',
     [theme.breakpoints.up('xs')]: {
       borderRadius: '3px',
@@ -29,6 +29,20 @@ const useStyles = makeStyles((theme) => ({
       cursor: 'pointer',
       boxShadow: '0px 0px 10px rgba(0,0,0,0.7)',
     },
+  },
+  image: {
+    width: '100%',
+    [theme.breakpoints.up('xs')]: {
+      borderRadius: '3px',
+    },
+    [theme.breakpoints.up('sm')]: {
+      borderRadius: '5px',
+    },
+    [theme.breakpoints.up('lg')]: {
+      borderRadius: '7px',
+    },
+    boxShadow: '0px 0px 5px rgba(0,0,0,0.5)',
+    transition: '0.3s',
   },
   imageFocus: {
     width: '100%',
@@ -77,6 +91,7 @@ interface IProps {
   isOpen: boolean
   cardClick: (isOpen: boolean, id: number, value: number) => void
   setIsKeydownGame: (value: boolean) => void
+  themeNumber: number
 }
 
 const Card: React.FC<IProps> = ({
@@ -88,6 +103,7 @@ const Card: React.FC<IProps> = ({
   isOpen,
   cardClick,
   setIsKeydownGame,
+  themeNumber,
 }: IProps) => {
   const classes = useStyles();
   const [size, setSize] = useState<any>(2);
@@ -110,21 +126,16 @@ const Card: React.FC<IProps> = ({
       sizes = [2, 3, 3];
     }
     setSize(sizes[level]);
-    // if (level) {
-    //   setSize(3);
-    // } else {
-    //   setSize(2);
-    // }
   }, [toggleNewGame]);
 
   return (
     <Grid item xs={size}>
       <div className={classes.card}>
-        <div className={!isOpen ? classes.frontInBack : classes.front}>
+        <div className={!isOpen ? classes.frontInBack : classes.front} style={(themeNumber) ? {opacity: 0.8} : {opacity: 1}}>
           <img className={(focusCard.current === id) ? classes.imageFocus : classes.image} src={`./${value}.jpg`} alt="card" />
         </div>
-        <div className={!isOpen ? classes.backInFront : classes.back} onClick={handleClick}>
-          <img className={(focusCard.current === id) ? classes.imageFocus : classes.image} src="./back.jpg" alt="card" />
+        <div className={!isOpen ? classes.backInFront : classes.back} onClick={handleClick} style={(themeNumber) ? {opacity: 0.8} : {opacity: 1}}>
+          <img className={(focusCard.current === id) ? classes.imageFocus : classes.imageInteractive} src="./back.jpg" alt="card" />
         </div>
       </div>
     </Grid>
