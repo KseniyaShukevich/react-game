@@ -501,7 +501,7 @@ const GridGame: React.FC<IProps> = ({ theme, setTheme }: IProps) => {
       if (!gameObj.isSave() && !isEndGame && keypress.current !== 'Enter') {
         setIsAnimation(true);
         openCards();
-        setTimeout(() => setIsLoading(false), 100);
+        setIsLoading(false);
         setTimeout(() => {
           closeOpenCards();
           setTimeout(() => {
@@ -545,7 +545,7 @@ const GridGame: React.FC<IProps> = ({ theme, setTheme }: IProps) => {
           <div className={isLoading ? classes.hiddenGame : classes.noHiddenGame}>
             {isLoading && (
             <div className={classes.loading}>
-              <img src="./Snake.gif" alt="loading" />
+              <img src="./loading.gif" alt="loading" style={{ width: 50 }} />
             </div>
             )}
             {
