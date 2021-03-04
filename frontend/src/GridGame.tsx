@@ -26,22 +26,23 @@ import statisticsObj from './statisticsObj';
 import LayerPlay from './LayerPlay';
 import Autoplay from './Autoplay';
 import levelObj from './levelObj';
+import fieldObj from './fieldObj';
 
 const useStyles = makeStyles((theme) => ({
   hiddenGame: {
     display: 'flex',
     alignItems: 'center',
-    height: '500px',
     width: '100%',
     position: 'relative',
     overflow: 'hidden',
+    padding: '20px 0',
   },
   noHiddenGame: {
     display: 'flex',
     alignItems: 'center',
-    height: '500px',
     width: '100%',
     position: 'relative',
+    padding: '20px 0',
   },
   containerGame: {
     minHeight: '91vh',
@@ -91,17 +92,39 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '440px',
     position: 'relative',
   },
+  mobileLight: {
+    height: '102vw',
+    maxHeight: '980px',
+    position: 'relative',
+  },
+  mobileContainer: {
+    // display: 'flex',
+    width: '100%',
+    position: 'relative',
+  },
   middleBox: {
     height: '33vw',
     maxHeight: '320px',
     position: 'relative',
     margin: '80px 0',
   },
+  mobileMiddle: {
+    height: '66vw',
+    position: 'relative',
+    maxHeight: '650px',
+    marginBottom: '3px',
+  },
   bigBox: {
     height: '49vw',
     maxHeight: '480px',
     position: 'relative',
     paddingLeft: '8px',
+  },
+  mobileBig: {
+    height: '45vw',
+    position: 'relative',
+    maxHeight: '430px',
+    marginBottom: '3px',
   },
 }));
 
@@ -124,6 +147,7 @@ const GridGame: React.FC = () => {
   const [toggleNewGame, setToggleNewGame] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [level, setLevel] = useState<number>(() => levelObj.get());
+  const [field, setField] = useState<number>(() => fieldObj.get());
   const [isNewGame, setIsNewGame] = useState<boolean>(false);
   const [isKeydownGame, setIsKeydownGame] = useState<boolean>(false);
   const [toggleKey, setToggleKey] = useState<boolean>(false);
@@ -135,6 +159,7 @@ const GridGame: React.FC = () => {
   const sound = useRef(null);
   const count = useRef<number>(1);
   const currLevel = useRef<number>(level);
+  const currField = useRef<number>(field);
   const focusCard = useRef<number>(-1);
   const keypress = useRef(null);
 
@@ -373,11 +398,19 @@ const GridGame: React.FC = () => {
     }
   };
 
+  const getSteps = (): Array<number> => {
+    const cField: number = fieldObj.get();
+    if (cField) {
+      return [4, 4, 6];
+    }
+    return [6, 8, 8];
+  };
+
   const doArrowUp = (): void => {
     if (focusCard.current === -1) {
       focusCard.current = 0;
     } else {
-      const steps: Array<number> = [6, 8, 8];
+      const steps: Array<number> = getSteps();
       const newId: number = focusCard.current - steps[level];
       if (newId < 0) {
         focusCard.current = cards.length + focusCard.current - steps[level];
@@ -391,7 +424,7 @@ const GridGame: React.FC = () => {
     if (focusCard.current === -1) {
       focusCard.current = 0;
     } else {
-      const steps: Array<number> = [6, 8, 8];
+      const steps: Array<number> = getSteps();
       focusCard.current = (focusCard.current + steps[level]) % cards.length;
     }
   };
@@ -438,14 +471,18 @@ const GridGame: React.FC = () => {
 
   useEffect(() => {
     if (isPlay) setIsLoading(true);
-  }, [level]);
+  }, [level, field]);
 
   useEffect(() => {
     const newLevel = levelObj.get();
+    const newField = fieldObj.get();
 
-    if (!isSettings && currLevel.current !== newLevel) {
+    if (!isSettings && (currLevel.current !== newLevel || currField.current !== newField)) {
       currLevel.current = newLevel;
+      currField.current = newField;
       setLevel(newLevel);
+      setField(newField);
+      console.log('NEW GAME');
       getNewGame();
     }
   }, [isSettings]);
@@ -504,7 +541,7 @@ const GridGame: React.FC = () => {
             )}
             {
             (level === 0) ? (
-              <Grid container spacing={1} className={classes.box}>
+              <Grid container spacing={1} className={field ? classes.mobileLight : classes.box}>
                 {isEndGame && (
                 <LayerEndGame
                   countSeconds={countSeconds}
@@ -527,7 +564,8 @@ const GridGame: React.FC = () => {
                 ))}
               </Grid>
             ) : (
-              <div className={classes.containerNotLight}>
+            // <div className={classes.containerNotLight}>
+              <div className={field ? classes.mobileContainer : classes.containerNotLight}>
                 {isEndGame && (
                   <LayerEndGame
                     countSeconds={countSeconds}
@@ -535,7 +573,18 @@ const GridGame: React.FC = () => {
                   />
                 )}
                 {isAutoplay && (<div className={classes.noGame} />)}
-                <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
+                {/* <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}> */}
+                <Grid
+                  container
+                  spacing={1}
+                  className={
+                  (level === 1) ? (
+                    field ? classes.mobileMiddle : classes.middleBox
+                  ) : (
+                    field ? classes.mobileBig : classes.bigBox
+                  )
+                  }
+                >
                   {cards.slice(0, cards.length / 2).map((card) => (
                     <Card
                       focusCard={focusCard}
@@ -550,7 +599,17 @@ const GridGame: React.FC = () => {
                     />
                   ))}
                 </Grid>
-                <Grid container spacing={1} className={(level === 1) ? classes.middleBox : classes.bigBox}>
+                <Grid
+                  container
+                  spacing={1}
+                  className={
+                    (level === 1) ? (
+                      field ? classes.mobileMiddle : classes.middleBox
+                    ) : (
+                      field ? classes.mobileBig : classes.bigBox
+                    )
+                }
+                >
                   {cards.slice(cards.length / 2).map((card) => (
                     <Card
                       focusCard={focusCard}

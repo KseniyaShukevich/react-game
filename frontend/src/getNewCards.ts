@@ -2,6 +2,7 @@ import ICard from './ICard';
 import idLocalStorage from './idLocalStorage';
 import getRandomNumber from './getRandomNumber';
 import levelObj from './levelObj';
+import fieldObj from './fieldObj';
 
 const levels: Array<number> = [6, 8, 12];
 let pairsCards: number;
@@ -44,6 +45,7 @@ const getMixCards = (cards: Array<number>): Array<number> => {
 
 const getCardsObjects = (cards: Array<number>): Array<ICard> => {
   const level: number = levelObj.get();
+  const field: number = fieldObj.get();
 
   const cardsObjects: Array<ICard> = cards.map((card: number, index: number) => {
     const cardObject: ICard = {
@@ -55,13 +57,15 @@ const getCardsObjects = (cards: Array<number>): Array<ICard> => {
     return cardObject;
   });
 
-  if (level === 1) {
+  if (level === 1 && !field) {
+    console.log('HERE 1');
     return [
       ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
       ...cardsObjects.slice(4, 8), ...cardsObjects.slice(12),
     ];
   }
-  if (level === 2) {
+  if (level === 2 && !field) {
+    console.log('HERE 2');
     return [
       ...cardsObjects.slice(0, 4), ...cardsObjects.slice(8, 12),
       ...cardsObjects.slice(16, 20), ...cardsObjects.slice(4, 8),
