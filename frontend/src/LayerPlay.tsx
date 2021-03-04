@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     top: 0,
     left: 0,
-    background: fade(theme.palette.background.default, 0.8),
+    background: fade(theme.palette.background.default, 0.9),
     transition: 'opacity 0.5s',
   },
   overlay: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     top: 0,
     left: 0,
-    background: fade(theme.palette.background.default, 0.8),
+    background: fade(theme.palette.background.default, 0.9),
     transition: 'opacity 0.5s',
   },
 }));
