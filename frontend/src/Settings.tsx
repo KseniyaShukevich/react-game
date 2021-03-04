@@ -55,8 +55,8 @@ interface IProps {
   inputElSound: any
   isSettings: boolean
   setIsSettings: (value: boolean) => void
-  setIsMusic: (value: boolean) => void
-  setIsSound: (value: boolean) => void
+  setIsMusic: (value: any) => void
+  setIsSound: (value: any) => void
   setTheme: (value: any) => void
   setThemeNumber: (value: number) => void
 }
@@ -110,7 +110,7 @@ const Statistics: React.FC<IProps> = ({
       setVolumeFunc(audioObj.get(`${name}`) * maxVolume);
       refEl.current.volume = audioObj.get(`${name}`);
     }
-    setIsFunc(!isAudio);
+    setIsFunc((prev: any) => !prev);
   };
 
   const changeVolume = (
@@ -118,9 +118,17 @@ const Statistics: React.FC<IProps> = ({
   ): void => {
     refEl.current.volume = inputValue / maxVolume;
     setVolumeFunc(inputValue);
-    if (!isAudio && inputValue) setIsFunc(true);
-    if (!inputValue) setIsFunc(false);
   };
+
+  useEffect(() => {
+    if (isSound && (+volumeSound === 0)) setIsSound(false);
+    if (!isSound && (+volumeSound > 0)) setIsSound(true);
+  }, [volumeSound]);
+
+  useEffect(() => {
+    if (isMusic && (+volumeMusic === 0)) setIsMusic(false);
+    if (!isMusic && (+volumeMusic > 0)) setIsMusic(true);
+  }, [volumeMusic]);
 
   const onClose = (): void => {
     setIsSettings(false);
