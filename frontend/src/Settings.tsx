@@ -9,6 +9,7 @@ import {
 } from '@material-ui/icons';
 import audioObj from './audioObj';
 import levelObj from './levelObj';
+import fieldObj from './fieldObj';
 
 const useStyles = makeStyles((theme) => ({
   containerSettings: {
@@ -73,6 +74,9 @@ const Statistics: React.FC<IProps> = ({
   const optionLevel1 = useRef(null);
   const optionLevel2 = useRef(null);
   const options: Array<any> = [optionLevel0, optionLevel1, optionLevel2];
+  const optionPC = useRef(null);
+  const optionMobile = useRef(null);
+  const optionsField: Array<any> = [optionPC, optionMobile];
 
   const saveAudio = (isAudio: boolean, volume: number, name: string): void => {
     if (isAudio) {
@@ -131,11 +135,17 @@ const Statistics: React.FC<IProps> = ({
     levelObj.save(e.target.value);
   };
 
+  const chooseField = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    fieldObj.save(e.target.value);
+  };
+
   useEffect(() => {
     setTimeout(() => {
       if (isSettings && options[0].current) {
-        const optionIndex = levelObj.get();
-        options[optionIndex].current.selected = true;
+        const optionIndexLevel: number = levelObj.get();
+        options[optionIndexLevel].current.selected = true;
+        const optionIndexField: number = fieldObj.get();
+        optionsField[optionIndexField].current.selected = true;
       }
     }, 100);
   }, [isSettings]);
@@ -196,6 +206,13 @@ const Statistics: React.FC<IProps> = ({
             <option ref={optionLevel0} value={0}>light</option>
             <option ref={optionLevel1} value={1}>normal</option>
             <option ref={optionLevel2} value={2}>hard</option>
+          </select>
+        </div>
+        <div className={classes.container}>
+        <Typography variant="subtitle1" className={classes.subtitle}>Field</Typography>
+          <select className={classes.select} onChange={chooseField}>
+            <option ref={optionPC} value={0}>PC</option>
+            <option ref={optionMobile} value={1}>mobile</option>
           </select>
         </div>
       </div>

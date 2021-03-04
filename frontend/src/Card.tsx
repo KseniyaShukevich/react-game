@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import levelObj from './levelObj';
+import fieldObj from './fieldObj';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -101,11 +102,19 @@ const Card: React.FC<IProps> = ({
 
   useEffect(() => {
     const level = levelObj.get();
-    if (level) {
-      setSize(3);
+    const field = fieldObj.get();
+    let sizes: Array<number>;
+    if (field) {
+      sizes = [3, 3, 2];
     } else {
-      setSize(2);
+      sizes = [2, 3, 3];
     }
+    setSize(sizes[level]);
+    // if (level) {
+    //   setSize(3);
+    // } else {
+    //   setSize(2);
+    // }
   }, [toggleNewGame]);
 
   return (
